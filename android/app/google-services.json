@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1025716753868",
+    "project_id": "boggle-663ae",
+    "storage_bucket": "boggle-663ae.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1025716753868:android:23853d2758baefdcb43969",
+        "android_client_info": {
+          "package_name": "com.maxshaberman.boggle"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1025716753868-qpb7e5efj0cs89u5q12urb6m45oqcobn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeC0aFMwKraS9ic8WC3dke-VBG91D0KNs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1025716753868-qpb7e5efj0cs89u5q12urb6m45oqcobn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
