@@ -30,21 +30,27 @@ class HomeScreenMain extends StatelessWidget {
     var gameCode = '';
     OverlayEntry? currentOverlay;
 
-    return BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
-      if (state is Joining) {
-        Navigator.push(
-          context,
-          MaterialPageRoute<void>(
-            builder: (context) => BoardScreen(
-              gameCode: state.gameCode,
-              playerCode: state.playerCode,
-            ),
-          ),
-        );
-        return const Text('Loading...');
-      } else {
-        return GameArea(
-          child: Row(
+    print('Home screen');
+    return GameArea(
+      child: BlocListener<HomeBloc, HomeState>(
+        listener: (context, state) {
+          if (state is Joining) {
+            if (currentOverlay?.mounted ?? false) {
+              currentOverlay?.remove();
+            }
+            Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (context) => BoardScreen(
+                  gameCode: state.gameCode,
+                  playerCode: state.playerCode,
+                ),
+              ),
+            );
+          }
+        },
+        child: BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
+          return Row(
             children: <Widget>[
               TextButton(
                 child: const Text('Solo'),
@@ -113,9 +119,9 @@ class HomeScreenMain extends StatelessWidget {
                 },
               ),
             ],
-          ),
-        );
-      }
-    });
+          );
+        }),
+      ),
+    );
   }
 }

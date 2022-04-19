@@ -1,5 +1,9 @@
 import 'dart:convert';
+import 'package:boggle_flutter/constants/constants.dart';
 import 'package:flutter/material.dart';
+import 'dart:math';
+
+const kDiceBoxSize = 50.0;
 
 class BoggleBoard {
   const BoggleBoard({
@@ -66,7 +70,30 @@ class BoggleCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(letter);
+    return Container(
+      width: kDiceBoxSize,
+      height: kDiceBoxSize,
+      decoration: BoxDecoration(
+        color: Colors.blue,
+        // border: Border.all(
+        //   color: Colors.blueGrey,
+        // ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(2.0),
+        child: Container(
+          child: Text(letter),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: const Color(0xFFFFFFF0),
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(
+              color: Colors.black,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -80,8 +107,26 @@ class BoggleTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Table(
-      children: rows,
+    var numCols = 0;
+
+    for (final row in rows) {
+      numCols = max(row.children?.length ?? 0, numCols);
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.blue,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          constraints: BoxConstraints(maxWidth: numCols * kDiceBoxSize),
+          child: Table(
+            children: rows,
+            defaultColumnWidth: FractionColumnWidth(1 / numCols),
+          ),
+        ),
+      ),
     );
   }
 }
