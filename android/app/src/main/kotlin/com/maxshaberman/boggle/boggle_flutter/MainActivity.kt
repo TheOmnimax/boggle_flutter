@@ -1,4 +1,4 @@
-package com.maxshaberman.boggle.boggle_flutter
+package com.maxshaberman.boggle
 
 import io.flutter.embedding.android.FlutterActivity
 

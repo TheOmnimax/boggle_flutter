@@ -20,7 +20,7 @@ class BoardScreen extends StatelessWidget {
       create: (context) => BoardBloc(
         gameCode: gameCode,
         playerCode: playerCode,
-      )..add(LoadGame()),
+      )..add(const LoadGame()),
       child: const BoardScreenMain(),
     );
   }
@@ -42,12 +42,33 @@ class BoardScreenMain extends StatelessWidget {
           return Text('Loading...');
         } else {
           return GameArea(
-            child: BoggleTable(
-              rows: state.boggleBoard.tableRows,
+            child: Row(
+              children: [
+                Container(),
+                BoggleTable(
+                  rows: state.boggleBoard.tableRows,
+                ),
+                Container(),
+              ],
             ),
           );
         }
       },
+    );
+  }
+}
+
+class WordEntry extends StatelessWidget {
+  const WordEntry({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          children: [],
+        )
+      ],
     );
   }
 }
