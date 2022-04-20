@@ -28,7 +28,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     final uri = Uri.parse(baseUrl + 'join-game');
 
     final headers = {
-      'game_code': gameCode,
+      'room_code': gameCode,
     };
 
     final response = await http.post(
@@ -48,7 +48,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     final uri = Uri.parse(baseUrl + 'start-game');
 
     final headers = {
-      'game_code': gameCode,
+      'room_code': gameCode,
     };
 
     final response = await http.post(
@@ -65,7 +65,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     final uri = Uri.parse(baseUrl + 'add-word');
 
     final headers = {
-      'game_code': gameCode,
+      'room_code': gameCode,
     };
 
     final response = await http.post(
@@ -84,7 +84,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     final uri = Uri.parse(baseUrl + 'get-results');
 
     final headers = {
-      'game_code': gameCode,
+      'room_code': gameCode,
     };
 
     final response = await http.post(

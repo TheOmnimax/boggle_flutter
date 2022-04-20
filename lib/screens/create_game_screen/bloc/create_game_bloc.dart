@@ -24,7 +24,7 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
     print(response.body);
     final responseBody = json.decode(response.body) as Map<String, dynamic>;
     print('Got response body!');
-    final gameCode = responseBody['game_code'] as String;
+    final gameCode = responseBody['room_code'] as String;
     return gameCode;
   }
 
@@ -37,7 +37,7 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
     print(uri);
 
     final headers = {
-      'game_code': gameCode,
+      'room_code': gameCode,
       'width': width.toString(),
       'height': height.toString(),
     };
