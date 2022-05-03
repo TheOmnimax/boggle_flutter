@@ -1,7 +1,9 @@
-import 'dart:convert';
+import 'dart:math';
+
 import 'package:boggle_flutter/constants/constants.dart';
 import 'package:flutter/material.dart';
-import 'dart:math';
+
+import 'game.dart';
 
 const kDiceBoxSize = 50.0;
 
@@ -18,9 +20,18 @@ class BoggleBoard {
   //   ['⬤']
   // ]
 
-  static List<List<String>> getHiddenBoard() {
+  static List<List<String>> getHiddenBoard({
+    required int width,
+    required int height,
+  }) {
     final spaces = <List<String>>[];
-    // for
+    for (var r = 0; r < width; r++) {
+      final row = <String>[];
+      for (var c = 0; c < height; c++) {
+        row.add('⬤');
+      }
+      spaces.add(row);
+    }
 
     return spaces;
   }
@@ -42,6 +53,14 @@ class BoggleBoard {
       spaces: spaces,
       tableRows: _getRows(spaces: spaces),
     );
+  }
+
+  static BoggleBoard createHiddenBoard({
+    required int width,
+    required int height,
+  }) {
+    final hiddenSpaces = getHiddenBoard(width: width, height: height);
+    return fromDynamic(hiddenSpaces);
   }
 
   static List<TableRow> _getRows({
@@ -130,3 +149,73 @@ class BoggleTable extends StatelessWidget {
     );
   }
 }
+
+class BogglePlayer extends Player {
+  const BogglePlayer({
+    required String id,
+    String name = '',
+    bool isHost = false,
+  }) : super(
+          id: id,
+          name: name,
+          isHost: isHost,
+        );
+
+  final List<String> _approvedWords = const [];
+  final Map<String, WordReason> _rejectedWords = const <String, WordReason>{};
+
+  void addApproved(String word) {
+    _approvedWords.add(word);
+  }
+
+  void addRejected({
+    required String word,
+    required WordReason reason,
+  }) {
+    _rejectedWords[word] = reason;
+  }
+
+  List<String> getApprovedWords() {
+    return _approvedWords;
+  }
+
+  Map<String, WordReason> getRejectedWords() {
+    return _rejectedWords;
+  }
+
+  String getRejectedString() {
+    final rejectedList = <String>[];
+
+    for (final key in _rejectedWords.keys) {
+      rejectedList.add('$key: ${_rejectedWords[key]}');
+    }
+
+    return rejectedList.join('\n');
+  }
+}
+
+// class BoggleGame extends Game {
+//   const BoggleGame({
+//     required this.boggleBoard,
+//     // required this.timer,
+//     required this.roomCode,
+//     required List<Player> players,
+//   }) : super(players: players);
+//
+//   final BoggleBoard boggleBoard;
+//   // final GameTimer timer;
+//   final String roomCode;
+//
+//   static BoggleGame loadingBoard() {
+//     return const BoggleGame(
+//       boggleBoard: const BoggleBoard(
+//         spaces: <List<String>>[],
+//         tableRows: [],
+//
+//       ),
+//       // timer: GameTimer(msStart: 0),
+//       roomCode: '',
+//       players: [],
+//     );
+//   }
+// }

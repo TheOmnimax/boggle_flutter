@@ -68,7 +68,7 @@ class HomeScreenMain extends StatelessWidget {
               TextButton(
                 child: const Text('Host'),
                 onPressed: () {
-                  print('Creating game...');
+                  print('Creating utils.game.game...');
                   Navigator.push(
                     context,
                     MaterialPageRoute<void>(

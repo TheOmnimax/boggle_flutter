@@ -21,7 +21,11 @@ enum PlayerType {
 }
 
 enum WordReason {
-  notFound,
-  notExist,
   tooShort,
+  notFound,
+  notAWord,
+  sharedWord,
+  noTime,
+  alreadyAdded,
+  unknown,
 }

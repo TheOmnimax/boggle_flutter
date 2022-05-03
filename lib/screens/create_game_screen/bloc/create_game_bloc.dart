@@ -1,9 +1,10 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:boggle_flutter/bloc/app_bloc.dart';
-import 'bloc.dart';
-import 'package:boggle_flutter/constants/constants.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:boggle_flutter/constants/constants.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' as http;
+
+import 'bloc.dart';
 
 class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
   CreateGameBloc() : super(const MainState()) {
@@ -28,18 +29,20 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
     return gameCode;
   }
 
-  Future<http.Response> _createBoard({
+  Future<http.Response> _createGame({
     required String gameCode,
     required int width,
     required int height,
+    required int time,
   }) async {
-    final uri = Uri.parse(baseUrl + 'create-board');
+    final uri = Uri.parse(baseUrl + 'create-game');
     print(uri);
 
     final headers = {
       'room_code': gameCode,
       'width': width.toString(),
       'height': height.toString(),
+      'time': time.toString(),
     };
 
     final response = await http.post(
@@ -55,18 +58,21 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
   }
 
   Future _create(Create event, Emitter<CreateGameState> emit) async {
-    print('Starting to create game...');
+    print('Starting to create utils.game.game...');
     final gameCode = await _createRoom();
     print('Created room!');
-    final response = await _createBoard(
+    // TODO: Update with more customized time
+    final response = await _createGame(
       gameCode: gameCode,
       width: event.width,
       height: event.height,
+      time: 90,
     );
     print('Created board!');
 
     final statusCode = response.statusCode;
     final responseBody = json.decode(response.body) as Map<String, dynamic>;
+    print(responseBody);
 
     final playerCode = responseBody['player_id'] as String;
 
