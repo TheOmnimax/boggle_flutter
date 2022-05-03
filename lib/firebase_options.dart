@@ -61,7 +61,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1025716753868',
     projectId: 'boggle-663ae',
     storageBucket: 'boggle-663ae.appspot.com',
-    iosClientId: '1025716753868-ifnvtjt9tud541v6lu34p81sjtki7d66.apps.googleusercontent.com',
-    iosBundleId: 'com.maxshaberman.boggle',
+    iosClientId:
+        '1025716753868-ifnvtjt9tud541v6lu34p81sjtki7d66.apps.googleusercontent.com',
+    iosBundleId: 'com.maxshaberman.boggle_flutter',
   );
 }
