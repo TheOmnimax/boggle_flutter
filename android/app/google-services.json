@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:1025716753868:android:23853d2758baefdcb43969",
         "android_client_info": {
-          "package_name": "com.maxshaberman.boggle"
+          "package_name": "com.maxshaberman.boggle_flutter"
         }
       },
       "oauth_client": [
