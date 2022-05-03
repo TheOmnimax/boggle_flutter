@@ -20,7 +20,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Future _soloGame(SoloGame event, Emitter<HomeState> emit) async {}
   Future _hostGame(HostGame event, Emitter<HomeState> emit) async {}
   Future _joinGame(JoinGame event, Emitter<HomeState> emit) async {
-    final uri = Uri.parse(baseUrl + 'join-game');
+    final uri = Uri.parse(baseUrl + 'join-utils.game.game');
     final headers = {
       'room_code': event.gameCode,
     };

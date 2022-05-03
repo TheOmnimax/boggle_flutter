@@ -16,7 +16,7 @@ class CreateGame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Starting create game page...');
+    print('Starting create utils.game.game page...');
     return BlocProvider(
       create: (context) => CreateGameBloc(),
       child: const CreateGameMain(),
