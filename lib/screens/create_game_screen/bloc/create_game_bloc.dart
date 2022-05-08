@@ -13,10 +13,16 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
 
   Future<String> _createRoom() async {
     final uri = Uri.parse(baseUrl + 'create-room');
+
+    final headers = {
+      'Access-Control-Allow-Origin': '*',
+    };
+
     print('URI: $uri');
 
     final response = await http.post(
       uri,
+      headers: headers,
     );
     print('Got response!');
 
@@ -30,7 +36,7 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
   }
 
   Future<http.Response> _createGame({
-    required String gameCode,
+    required String roomCode,
     required int width,
     required int height,
     required int time,
@@ -39,14 +45,22 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
     print(uri);
 
     final headers = {
-      'room_code': gameCode,
+      'Access-Control-Allow-Origin': '*',
+    };
+
+    final body = json.encode({
+      'room_code': roomCode,
       'width': width.toString(),
       'height': height.toString(),
       'time': time.toString(),
-    };
+    });
+
+    print('Headers:');
+    print(headers);
 
     final response = await http.post(
       uri,
+      body: body,
       headers: headers,
     );
 
@@ -63,7 +77,7 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
     print('Created room!');
     // TODO: Update with more customized time
     final response = await _createGame(
-      gameCode: gameCode,
+      roomCode: gameCode,
       width: event.width,
       height: event.height,
       time: 90,
