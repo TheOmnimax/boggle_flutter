@@ -27,12 +27,17 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     final uri = Uri.parse(baseUrl + 'is-started');
 
     final headers = {
-      'room_code': roomCode,
+      'Access-Control-Allow-Origin': '*',
     };
+
+    final body = json.encode({
+      'room_code': roomCode,
+    });
 
     final response = await http.post(
       uri,
       headers: headers,
+      body: body,
     );
 
     final responseBody = json.decode(response.body) as Map<String, dynamic>;
@@ -56,13 +61,18 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     final uri = Uri.parse(baseUrl + 'join-game');
 
     final headers = {
+      'Access-Control-Allow-Origin': '*',
+    };
+
+    final body = json.encode({
       'room_code': roomCode,
       'host_id': hostId,
-    };
+    });
 
     final response = await http.post(
       uri,
       headers: headers,
+      body: body,
     );
 
     final statusCode = response.statusCode;
@@ -101,13 +111,18 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     final uri = Uri.parse(baseUrl + 'start-game');
 
     final headers = {
+      'Access-Control-Allow-Origin': '*',
+    };
+
+    final body = json.encode({
       'room_code': roomCode,
       'player_id': state.player.id,
-    };
+    });
 
     final response = await http.post(
       uri,
       headers: headers,
+      body: body,
     );
 
     final statusCode = response.statusCode;
@@ -134,12 +149,17 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     final uri = Uri.parse(baseUrl + 'add-word');
 
     final headers = {
-      'room_code': roomCode,
+      'Access-Control-Allow-Origin': '*',
     };
+
+    final body = json.encode({
+      'room_code': roomCode,
+    });
 
     final response = await http.post(
       uri,
       headers: headers,
+      body: body,
     );
 
     final statusCode = response.statusCode;
@@ -205,12 +225,17 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     final uri = Uri.parse(baseUrl + 'get-results');
 
     final headers = {
-      'room_code': roomCode,
+      'Access-Control-Allow-Origin': '*',
     };
+
+    final body = json.encode({
+      'room_code': roomCode,
+    });
 
     final response = await http.post(
       uri,
       headers: headers,
+      body: body,
     );
 
     final statusCode = response.statusCode;
