@@ -11,6 +11,7 @@ import 'bloc.dart';
 class BoardBloc extends Bloc<BoardEvent, BoardState> {
   BoardBloc({
     required this.roomCode,
+    this.hostId = '',
   }) : super(const Loading()) {
     on<LoadGame>(_loadGame);
     on<StartGame>(_startGame);
@@ -20,6 +21,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
   }
 
   final String roomCode;
+  final String hostId;
 
   Future checkStarted() async {
     final uri = Uri.parse(baseUrl + 'is-started');
@@ -37,11 +39,13 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     final gameRunning = responseBody['running'] as bool;
     if (gameRunning) {
       print('Playing!');
+      add(const StartGame());
     } else {
       print('Get ready...');
     }
   }
 
+  // TODO: Find how to stop when game is over or exited
   void _timer() {
     print('Starting timer');
     const duration = Duration(seconds: 1);
@@ -53,6 +57,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
 
     final headers = {
       'room_code': roomCode,
+      'host_id': hostId,
     };
 
     final response = await http.post(
@@ -61,7 +66,10 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     );
 
     final statusCode = response.statusCode;
+    print(response.body);
     final responseBody = json.decode(response.body) as Map<String, dynamic>;
+    print('Joined game');
+    print(responseBody);
     final height = responseBody['height'] as int;
     final width = responseBody['width'] as int;
     final gameTime = responseBody['time'] as int;
@@ -81,17 +89,20 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
 
     // TODO: Update player and time remaining with values from server
     emit(Ready(
-        boggleBoard: boggleBoard,
-        player: const BogglePlayer(id: ''),
-        timeRemaining: 90));
+      boggleBoard: boggleBoard,
+      player: bogglePlayer,
+      timeRemaining: 90,
+    ));
     _timer();
   }
 
   Future _startGame(StartGame event, Emitter<BoardState> emit) async {
-    final uri = Uri.parse(baseUrl + 'start-utils.game.game');
+    print('Starting game!');
+    final uri = Uri.parse(baseUrl + 'start-game');
 
     final headers = {
       'room_code': roomCode,
+      'player_id': state.player.id,
     };
 
     final response = await http.post(
@@ -100,13 +111,22 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     );
 
     final statusCode = response.statusCode;
+    print(statusCode);
     final responseBody = json.decode(response.body) as Map<String, dynamic>;
-    emit(Playing(
-      boggleBoard: state.boggleBoard,
-      player: state.player,
-      timeRemaining: state.timeRemaining,
-      enteredWord: state.enteredWord,
-    ));
+    print(responseBody);
+
+    final gameStarted = responseBody['started'] as bool;
+
+    if (gameStarted) {
+      final boggleBoard = BoggleBoard.fromDynamic(responseBody['board']);
+
+      emit(Playing(
+        boggleBoard: boggleBoard,
+        player: state.player,
+        timeRemaining: state.timeRemaining,
+        enteredWord: state.enteredWord,
+      ));
+    }
   }
 
   Future _addWord(AddWord event, Emitter<BoardState> emit) async {
