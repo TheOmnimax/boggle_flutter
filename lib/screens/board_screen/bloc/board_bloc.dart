@@ -23,7 +23,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
   final String roomCode;
   final String hostId;
 
-  Future checkStarted(Emitter<BoardState> emit) async {
+  Future checkStarted() async {
     final uri = Uri.parse(baseUrl + 'is-started');
 
     final headers = {
@@ -39,22 +39,17 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     final gameRunning = responseBody['running'] as bool;
     if (gameRunning) {
       print('Playing!');
-
-      emit(Playing(
-        boggleBoard: state.boggleBoard,
-        player: state.player,
-        timeRemaining: state.timeRemaining,
-        enteredWord: state.enteredWord,
-      ));
+      add(const StartGame());
     } else {
       print('Get ready...');
     }
   }
 
-  void _timer(Emitter<BoardState> emit) {
+  // TODO: Find how to stop when game is over or exited
+  void _timer() {
     print('Starting timer');
     const duration = Duration(seconds: 1);
-    Timer.periodic(duration, (Timer t) async => await checkStarted(emit));
+    Timer.periodic(duration, (Timer t) async => await checkStarted());
   }
 
   Future _loadGame(LoadGame event, Emitter<BoardState> emit) async {
@@ -71,6 +66,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     );
 
     final statusCode = response.statusCode;
+    print(response.body);
     final responseBody = json.decode(response.body) as Map<String, dynamic>;
     print('Joined game');
     print(responseBody);
@@ -97,10 +93,11 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
       player: bogglePlayer,
       timeRemaining: 90,
     ));
-    _timer(emit);
+    _timer();
   }
 
   Future _startGame(StartGame event, Emitter<BoardState> emit) async {
+    print('Starting game!');
     final uri = Uri.parse(baseUrl + 'start-game');
 
     final headers = {
@@ -117,6 +114,19 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     print(statusCode);
     final responseBody = json.decode(response.body) as Map<String, dynamic>;
     print(responseBody);
+
+    final gameStarted = responseBody['started'] as bool;
+
+    if (gameStarted) {
+      final boggleBoard = BoggleBoard.fromDynamic(responseBody['board']);
+
+      emit(Playing(
+        boggleBoard: boggleBoard,
+        player: state.player,
+        timeRemaining: state.timeRemaining,
+        enteredWord: state.enteredWord,
+      ));
+    }
   }
 
   Future _addWord(AddWord event, Emitter<BoardState> emit) async {
