@@ -38,6 +38,7 @@ class BoardScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => BoardBloc(
         roomCode: gameCode,
+        hostId: playerCode,
       )..add(const LoadGame()),
       child: const BoardScreenMain(),
     );
@@ -95,7 +96,9 @@ class BoardScreenMain extends StatelessWidget {
                         return const WordEntry();
                       } else if (state is Ready) {
                         return TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            context.read<BoardBloc>().add(StartGame());
+                          },
                           child: Text('Start'),
                         );
                       } else if (state is Complete) {
