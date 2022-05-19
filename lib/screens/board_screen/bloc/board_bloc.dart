@@ -15,6 +15,8 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
   }) : super(const Loading()) {
     on<LoadGame>(_loadGame);
     on<StartGame>(_startGame);
+    on<GameStarted>(_gameStarted);
+    on<EnteredText>(_enteredText);
     on<AddWord>(_addWord);
     on<EndGame>(_endGame);
     on<ViewResults>(_viewResults);
@@ -22,32 +24,32 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
 
   final String roomCode;
   final String hostId;
+  GameStatus gameStatus = GameStatus.pre;
 
   Future checkStarted() async {
     final uri = Uri.parse(baseUrl + 'is-started');
 
-    final headers = {
+    final body = json.encode({
       'room_code': roomCode,
-    };
+    });
 
     final response = await http.post(
       uri,
-      headers: headers,
+      headers: sendHeaders,
+      body: body,
     );
 
     final responseBody = json.decode(response.body) as Map<String, dynamic>;
     final gameRunning = responseBody['running'] as bool;
     if (gameRunning) {
-      print('Playing!');
-      add(const StartGame());
-    } else {
-      print('Get ready...');
-    }
+      if (gameStatus == GameStatus.pre) {
+        add(const GameStarted());
+      }
+    } else {}
   }
 
   // TODO: Find how to stop when game is over or exited
   void _timer() {
-    print('Starting timer');
     const duration = Duration(seconds: 1);
     Timer.periodic(duration, (Timer t) async => await checkStarted());
   }
@@ -55,26 +57,23 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
   Future _loadGame(LoadGame event, Emitter<BoardState> emit) async {
     final uri = Uri.parse(baseUrl + 'join-game');
 
-    final headers = {
+    final body = json.encode({
       'room_code': roomCode,
-      'host_id': hostId,
-    };
+      'player_id': hostId,
+    });
 
     final response = await http.post(
       uri,
-      headers: headers,
+      headers: sendHeaders,
+      body: body,
     );
 
     final statusCode = response.statusCode;
-    print(response.body);
     final responseBody = json.decode(response.body) as Map<String, dynamic>;
-    print('Joined game');
-    print(responseBody);
     final height = responseBody['height'] as int;
     final width = responseBody['width'] as int;
     final gameTime = responseBody['time'] as int;
     final playerId = responseBody['player_id'] as String;
-    print(responseBody['board']);
     // final boardRaw = responseBody['board'] as List<dynamic>;
     final boggleBoard = BoggleBoard.createHiddenBoard(
       width: width,
@@ -97,59 +96,95 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
   }
 
   Future _startGame(StartGame event, Emitter<BoardState> emit) async {
-    print('Starting game!');
     final uri = Uri.parse(baseUrl + 'start-game');
 
-    final headers = {
+    final body = json.encode({
       'room_code': roomCode,
       'player_id': state.player.id,
-    };
+    });
 
     final response = await http.post(
       uri,
-      headers: headers,
+      headers: sendHeaders,
+      body: body,
     );
 
     final statusCode = response.statusCode;
-    print(statusCode);
     final responseBody = json.decode(response.body) as Map<String, dynamic>;
-    print(responseBody);
 
     final gameStarted = responseBody['started'] as bool;
+  }
 
-    if (gameStarted) {
+  Future _gameStarted(GameStarted event, Emitter<BoardState> emit) async {
+    final uri = Uri.parse(baseUrl + 'get-game-data');
+
+    final body = json.encode({
+      'room_code': roomCode,
+    });
+
+    final response = await http.post(
+      uri,
+      headers: sendHeaders,
+      body: body,
+    );
+
+    final responseBody = json.decode(response.body) as Map<String, dynamic>;
+    final running = responseBody['running'] as bool;
+    if (running) {
       final boggleBoard = BoggleBoard.fromDynamic(responseBody['board']);
-
+      gameStatus = GameStatus.during;
       emit(Playing(
         boggleBoard: boggleBoard,
         player: state.player,
         timeRemaining: state.timeRemaining,
-        enteredWord: state.enteredWord,
+        enteredWord: state.enteredText,
       ));
     }
   }
 
+  void _enteredText(EnteredText event, Emitter<BoardState> emit) {
+    emit(state.copyWith(
+      enteredWord: event.text,
+    ));
+  }
+
   Future _addWord(AddWord event, Emitter<BoardState> emit) async {
+    // room_code: str
+    // player_id: str
+    // timestamp: int
+    // word: str
+    print('Adding word...');
     final word = event.word;
     final uri = Uri.parse(baseUrl + 'add-word');
 
-    final headers = {
+    final body = json.encode({
       'room_code': roomCode,
-    };
+      'player_id': state.player.id,
+      'timestamp': DateTime.now().millisecondsSinceEpoch,
+      'word': event.word,
+    });
 
     final response = await http.post(
       uri,
-      headers: headers,
+      headers: sendHeaders,
+      body: body,
     );
 
     final statusCode = response.statusCode;
     final responseBody = json.decode(response.body) as Map<String, dynamic>;
+    print(responseBody);
 
     final reasonString = responseBody['reason'] as String;
-    final player = state.player;
+    final player =
+        state.player.copyWith(); // Create new player to detect state change
 
     if (reasonString == 'ACCEPTED') {
-      player.addApproved(word);
+      emit(
+        state.copyWith(
+          player: player.addApproved(word), // To update with new word info
+          enteredWord: '',
+        ),
+      );
     } else {
       final WordReason reason;
       switch (reasonString) {
@@ -188,15 +223,17 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
             reason = WordReason.unknown;
           }
       }
-      player.addRejected(
-        word: word,
-        reason: reason,
+
+      emit(
+        state.copyWith(
+          player: player.addRejected(
+            word: word,
+            reason: reason,
+          ),
+          enteredWord: '',
+        ),
       );
     }
-
-    emit(state.copyWith(
-      player: player,
-    ));
   }
 
   Future _endGame(EndGame event, Emitter<BoardState> emit) async {}
@@ -204,13 +241,14 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
   Future _viewResults(ViewResults event, Emitter<BoardState> emit) async {
     final uri = Uri.parse(baseUrl + 'get-results');
 
-    final headers = {
+    final body = json.encode({
       'room_code': roomCode,
-    };
+    });
 
     final response = await http.post(
       uri,
-      headers: headers,
+      headers: sendHeaders,
+      body: body,
     );
 
     final statusCode = response.statusCode;
