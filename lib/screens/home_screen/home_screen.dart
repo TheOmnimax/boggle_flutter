@@ -30,7 +30,6 @@ class HomeScreenMain extends StatelessWidget {
     var gameCode = '';
     OverlayEntry? currentOverlay;
 
-    print('Home screen');
     return GameArea(
       child: BlocListener<HomeBloc, HomeState>(
         listener: (context, state) {
@@ -68,7 +67,6 @@ class HomeScreenMain extends StatelessWidget {
               TextButton(
                 child: const Text('Host'),
                 onPressed: () {
-                  print('Creating utils.game.game...');
                   Navigator.push(
                     context,
                     MaterialPageRoute<void>(
@@ -104,10 +102,20 @@ class HomeScreenMain extends StatelessWidget {
                             TextButton(
                               child: const Text('join'),
                               onPressed: () {
-                                context
-                                    .read<HomeBloc>()
-                                    .add(JoinGame(gameCode: gameCode));
-                                // currentOverlay?.remove();
+                                //   context
+                                //       .read<HomeBloc>()
+                                //       .add(JoinGame(gameCode: gameCode));
+                                currentOverlay?.remove();
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (context) => BoardScreen(
+                                      gameCode: gameCode,
+                                      playerCode: '',
+                                    ),
+                                  ),
+                                );
                               },
                             ),
                           ],

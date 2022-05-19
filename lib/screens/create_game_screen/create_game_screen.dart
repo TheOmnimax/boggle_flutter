@@ -1,10 +1,10 @@
+import 'package:boggle_flutter/constants/constants.dart';
+import 'package:boggle_flutter/screens/board_screen/board_screen.dart';
 import 'package:boggle_flutter/screens/create_game_screen/bloc/bloc.dart';
+import 'package:boggle_flutter/shared_widgets/buttons.dart';
+import 'package:boggle_flutter/shared_widgets/general.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:boggle_flutter/shared_widgets/general.dart';
-import 'package:boggle_flutter/constants/constants.dart';
-import 'package:boggle_flutter/shared_widgets/buttons.dart';
-import 'package:boggle_flutter/screens/board_screen/board_screen.dart';
 
 class CreateGame extends StatelessWidget {
   const CreateGame({
@@ -16,7 +16,6 @@ class CreateGame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Starting create utils.game.game page...');
     return BlocProvider(
       create: (context) => CreateGameBloc(),
       child: const CreateGameMain(),

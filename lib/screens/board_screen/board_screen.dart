@@ -54,9 +54,6 @@ class BoardScreenMain extends StatelessWidget {
 
     return BlocBuilder<BoardBloc, BoardState>(
       builder: (context, state) {
-        print('On board screen...');
-        print('Game code: ${boardBloc.roomCode}');
-        // print('Player code: ${boardBloc.playerCode}');
         if (state is Loading) {
           return Text('Loading...');
         } else {
@@ -65,9 +62,19 @@ class BoardScreenMain extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                Column(
                   children: [
-                    Text('${state.timeRemaining}'),
+                    Row(
+                      children: [
+                        Text('Room code:'),
+                        Text(context.read<BoardBloc>().roomCode),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text('${state.timeRemaining}'),
+                      ],
+                    ),
                   ],
                 ),
                 BoggleTable(
@@ -93,11 +100,38 @@ class BoardScreenMain extends StatelessWidget {
                     ),
                     Builder(builder: (context) {
                       if (state is Playing) {
-                        return const WordEntry();
+                        return Column(
+                          children: [
+                            WordEntry(
+                              onChanged: (String word) {
+                                if (word.contains('\n')) {
+                                  word.replaceAll('\n', '');
+                                  print('Entered: $word');
+                                  context
+                                      .read<BoardBloc>()
+                                      .add(AddWord(word: word));
+                                } else {
+                                  context
+                                      .read<BoardBloc>()
+                                      .add(EnteredText(text: word));
+                                }
+                              },
+                              text: state.enteredText,
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                context.read<BoardBloc>().add(AddWord(
+                                      word: state.enteredText,
+                                    ));
+                              },
+                              child: Text('Send'),
+                            ),
+                          ],
+                        );
                       } else if (state is Ready) {
                         return TextButton(
                           onPressed: () {
-                            context.read<BoardBloc>().add(StartGame());
+                            context.read<BoardBloc>().add(const StartGame());
                           },
                           child: Text('Start'),
                         );
@@ -120,20 +154,32 @@ class BoardScreenMain extends StatelessWidget {
 
 class WordEntry extends StatelessWidget {
   const WordEntry({
+    required this.onChanged,
+    required this.text,
     Key? key,
   }) : super(key: key);
 
+  final Function(String) onChanged;
+  final String text;
+
   @override
   Widget build(BuildContext context) {
+    print('Text: $text');
+    final tc = TextEditingController();
+    tc.text = text;
+
+    tc
+      ..text = text
+      ..selection =
+          TextSelection(baseOffset: text.length, extentOffset: text.length);
     return Column(
       children: [
         const Text('Enter word:'),
         SizedBox(
           width: 50,
           child: TextFormField(
-            onChanged: (value) {
-              print('Entered: $value');
-            },
+            controller: tc,
+            onChanged: onChanged,
           ),
         ),
       ],
