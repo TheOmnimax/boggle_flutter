@@ -14,23 +14,13 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
   Future<String> _createRoom() async {
     final uri = Uri.parse(baseUrl + 'create-room');
 
-    final headers = {
-      'Access-Control-Allow-Origin': '*',
-    };
-
-    print('URI: $uri');
-
     final response = await http.post(
       uri,
-      headers: headers,
+      headers: sendHeaders,
     );
-    print('Got response!');
 
     final statusCode = response.statusCode;
-    print('Response body:');
-    print(response.body);
     final responseBody = json.decode(response.body) as Map<String, dynamic>;
-    print('Got response body!');
     final gameCode = responseBody['room_code'] as String;
     return gameCode;
   }
@@ -42,29 +32,19 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
     required int time,
   }) async {
     final uri = Uri.parse(baseUrl + 'create-game');
-    print(uri);
-
-    final headers = {
-      'Access-Control-Allow-Origin': '*',
-    };
 
     final body = json.encode({
       'room_code': roomCode,
-      'width': width.toString(),
-      'height': height.toString(),
-      'time': time.toString(),
+      'width': width,
+      'height': height,
+      'time': time,
     });
-
-    print('Headers:');
-    print(headers);
 
     final response = await http.post(
       uri,
       body: body,
-      headers: headers,
+      headers: sendHeaders,
     );
-
-    print(response.body);
 
     final statusCode = response.statusCode;
     final responseBody = json.decode(response.body) as Map<String, dynamic>;
@@ -72,9 +52,7 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
   }
 
   Future _create(Create event, Emitter<CreateGameState> emit) async {
-    print('Starting to create utils.game.game...');
     final gameCode = await _createRoom();
-    print('Created room!');
     // TODO: Update with more customized time
     final response = await _createGame(
       roomCode: gameCode,
@@ -82,11 +60,9 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
       height: event.height,
       time: 90,
     );
-    print('Created board!');
 
     final statusCode = response.statusCode;
     final responseBody = json.decode(response.body) as Map<String, dynamic>;
-    print(responseBody);
 
     final playerCode = responseBody['player_id'] as String;
 
