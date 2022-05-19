@@ -1,12 +1,12 @@
-import 'package:boggle_flutter/constants/constants.dart';
-import 'package:boggle_flutter/screens/home_screen/bloc/bloc.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:boggle_flutter/bloc/app_bloc.dart';
-import 'package:boggle_flutter/shared_widgets/general.dart';
-import 'package:boggle_flutter/shared_widgets/show_popup.dart';
+import 'package:boggle_flutter/constants/constants.dart';
 import 'package:boggle_flutter/screens/board_screen/board_screen.dart';
 import 'package:boggle_flutter/screens/create_game_screen/create_game_screen.dart';
+import 'package:boggle_flutter/screens/home_screen/bloc/bloc.dart';
+import 'package:boggle_flutter/shared_widgets/general.dart';
+import 'package:boggle_flutter/shared_widgets/show_popup.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -30,7 +30,6 @@ class HomeScreenMain extends StatelessWidget {
     var gameCode = '';
     OverlayEntry? currentOverlay;
 
-    print('Home screen');
     return GameArea(
       child: BlocListener<HomeBloc, HomeState>(
         listener: (context, state) {
@@ -68,7 +67,6 @@ class HomeScreenMain extends StatelessWidget {
               TextButton(
                 child: const Text('Host'),
                 onPressed: () {
-                  print('Creating utils.game.game...');
                   Navigator.push(
                     context,
                     MaterialPageRoute<void>(
@@ -104,10 +102,20 @@ class HomeScreenMain extends StatelessWidget {
                             TextButton(
                               child: const Text('join'),
                               onPressed: () {
-                                context
-                                    .read<HomeBloc>()
-                                    .add(JoinGame(gameCode: gameCode));
-                                // currentOverlay?.remove();
+                                //   context
+                                //       .read<HomeBloc>()
+                                //       .add(JoinGame(gameCode: gameCode));
+                                currentOverlay?.remove();
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (context) => BoardScreen(
+                                      gameCode: gameCode,
+                                      playerCode: '',
+                                    ),
+                                  ),
+                                );
                               },
                             ),
                           ],

@@ -29,3 +29,9 @@ enum WordReason {
   alreadyAdded,
   unknown,
 }
+
+enum GameStatus {
+  pre,
+  during,
+  post,
+}
