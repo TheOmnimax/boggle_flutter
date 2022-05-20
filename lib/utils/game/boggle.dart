@@ -160,21 +160,8 @@ class BogglePlayer extends Player {
           isHost: isHost,
         );
 
-  // TODO: QUESTION: Is it possible to have these be set automatically through a standard constructor, but manually using a different constructor?
-  // final List<String> _approvedWords;
-  // final Map<String, WordReason> _rejectedWords;
-
   final List<String> approvedWords;
   final Map<String, WordReason> rejectedWords;
-
-  // BogglePlayer _copiedPlayer({
-  //   required String id,
-  //   String name = '',
-  //   bool isHost = false,
-  // }) {
-  //   final bogglePlayer = BogglePlayer(id: id,);
-  //   bogglePlayer._approvedWords =
-  // }
 
   BogglePlayer addApproved(String word) {
     var newList = [word, ...approvedWords];

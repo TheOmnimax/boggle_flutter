@@ -49,7 +49,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
   }
 
   // TODO: Find how to stop when game is over or exited
-  void _timer() {
+  void _serverQuery() {
     const duration = Duration(seconds: 1);
     Timer.periodic(duration, (Timer t) async => await checkStarted());
   }
@@ -92,7 +92,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
       player: bogglePlayer,
       timeRemaining: 90,
     ));
-    _timer();
+    _serverQuery();
   }
 
   Future _startGame(StartGame event, Emitter<BoardState> emit) async {
@@ -149,10 +149,6 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
   }
 
   Future _addWord(AddWord event, Emitter<BoardState> emit) async {
-    // room_code: str
-    // player_id: str
-    // timestamp: int
-    // word: str
     print('Adding word...');
     final word = event.word;
     final uri = Uri.parse(baseUrl + 'add-word');
@@ -178,6 +174,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     final player =
         state.player.copyWith(); // Create new player to detect state change
 
+    // Is the best way to update the lists to create new BogglePlayer objects?
     if (reasonString == 'ACCEPTED') {
       emit(
         state.copyWith(
