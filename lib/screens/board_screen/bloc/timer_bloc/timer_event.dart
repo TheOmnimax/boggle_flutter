@@ -15,8 +15,8 @@ class TimerStart extends TimerEvent {
   const TimerStart();
 }
 
-class TimerUpdated extends TimerEvent {
-  const TimerUpdated({
+class TimeChange extends TimerEvent {
+  const TimeChange({
     required this.timeRemaining,
   });
 

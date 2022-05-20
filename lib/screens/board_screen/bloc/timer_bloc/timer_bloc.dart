@@ -14,7 +14,7 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
   }) : super(TimerState(time: startTime)) {
     on<LoadTimer>(_loadTimer);
     on<TimerStart>(_timerStart);
-    on<TimerUpdated>(_timerUpdated);
+    on<TimeChange>(_timeChange);
   }
 
   final BoardBloc boardBloc;
@@ -23,7 +23,7 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
   bool gameEnded = false;
 
   void _loadTimer(LoadTimer event, Emitter<TimerState> emit) {
-    gameTimer = GameTimer(msStart: startTime);
+    gameTimer = GameTimer(msStart: startTime * 1000);
     emit(TimerState(time: startTime));
   }
 
@@ -31,12 +31,12 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
     const duration = Duration(milliseconds: 10);
     Timer.periodic(duration, (Timer t) {
       if (gameTimer == null) {
-        // Error
+        print('Error: No game timer found');
       } else {
         gameTimer?.updateTimer();
         final timeRemaining = gameTimer?.getTimeNoNeg() ?? 0;
         if (timeRemaining != state.time) {
-          add(TimerUpdated(timeRemaining: timeRemaining));
+          add(TimeChange(timeRemaining: (timeRemaining / 1000).ceil()));
         }
 
         if (!gameEnded && (timeRemaining == 0)) {
@@ -50,9 +50,12 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
   void _timerStart(TimerStart event, Emitter<TimerState> emit) {
     gameTimer?.startTimer();
     _timerCountdown();
+    emit(state.copyWith(
+      running: true,
+    ));
   }
 
-  void _timerUpdated(TimerUpdated event, Emitter<TimerState> emit) {
-    emit(TimerState(time: event.timeRemaining));
+  void _timeChange(TimeChange event, Emitter<TimerState> emit) {
+    emit(state.copyWith(time: event.timeRemaining));
   }
 }

@@ -23,6 +23,8 @@ class CreateGame extends StatelessWidget {
   }
 }
 
+// TODO: Add loading page for when waiting to retrieve data from server, before able to load board
+
 class CreateGameMain extends StatelessWidget {
   const CreateGameMain({Key? key}) : super(key: key);
 
