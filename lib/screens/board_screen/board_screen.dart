@@ -8,20 +8,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class TimerComponent extends StatelessWidget {
   const TimerComponent({
     Key? key,
-    required this.boardBloc,
+    // required this.boardBloc,
   }) : super(key: key);
-
-  final BoardBloc boardBloc;
 
   @override
   Widget build(BuildContext context) {
+    // final BoardBloc boardBlocRead = context.read<BoardBloc>();
+
+    final boardBlocWatch = context.watch<BoardBloc>();
     return BlocProvider(
       create: (context) => TimerBloc(
-        boardBloc: boardBloc,
+        boardBloc: boardBlocWatch,
         startTime: 90,
-      ),
+      )..add(const LoadTimer()),
       child: BlocBuilder<TimerBloc, TimerState>(
         builder: (context, state) {
+          if ((!state.running) && (boardBlocWatch.state is Playing)) {
+            context.read<TimerBloc>().add(const TimerStart());
+          } else {}
           return Text(state.time.toString());
         },
       ),
@@ -77,10 +81,8 @@ class BoardScreenMain extends StatelessWidget {
                       ],
                     ),
                     Row(
-                      children: [
-                        TimerComponent(
-                          boardBloc: context.read<BoardBloc>(),
-                        ),
+                      children: const [
+                        TimerComponent(),
                       ],
                     ),
                   ],
