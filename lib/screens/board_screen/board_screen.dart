@@ -1,27 +1,33 @@
-import 'package:boggle_flutter/screens/board_screen/bloc/bloc.dart';
+import 'package:boggle_flutter/screens/board_screen/bloc/board_bloc/bloc.dart';
+import 'package:boggle_flutter/screens/board_screen/bloc/timer_bloc/bloc.dart';
 import 'package:boggle_flutter/shared_widgets/general.dart';
 import 'package:boggle_flutter/utils/game/boggle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-// class TimerBloc {}
-//
-// class TimerComponent extends StatelessWidget {
-//   const TimerComponent({
-//     Key? key,
-//     required this.boardBloc,
-//   }) : super(key: key);
-//
-//   final BoardBloc boardBloc;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return BlocProvider(
-//       create: (context) => TimerBloc(boardBloc: boardBloc),
-//       child: Container(),
-//     );
-//   }
-// }
+class TimerComponent extends StatelessWidget {
+  const TimerComponent({
+    Key? key,
+    required this.boardBloc,
+  }) : super(key: key);
+
+  final BoardBloc boardBloc;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => TimerBloc(
+        boardBloc: boardBloc,
+        startTime: 90,
+      ),
+      child: BlocBuilder<TimerBloc, TimerState>(
+        builder: (context, state) {
+          return Text(state.time.toString());
+        },
+      ),
+    );
+  }
+}
 
 class BoardScreen extends StatelessWidget {
   const BoardScreen({
@@ -72,7 +78,9 @@ class BoardScreenMain extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        Text('${state.timeRemaining}'),
+                        TimerComponent(
+                          boardBloc: context.read<BoardBloc>(),
+                        ),
                       ],
                     ),
                   ],

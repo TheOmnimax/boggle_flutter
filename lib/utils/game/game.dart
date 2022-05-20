@@ -10,11 +10,15 @@ class GameTimer {
   int _epochStart = 0;
   int _timePassed = 0;
   int _savedTimePassed = 0;
+  bool _ended = false;
 
   void updateTimer() {
     if (_timerRunning) {
       final currentTime = DateTime.now().millisecondsSinceEpoch;
       _timePassed = _savedTimePassed + (currentTime - _epochStart);
+      if (msStart <= _timePassed) {
+        _ended = true;
+      }
     }
   }
 
@@ -32,6 +36,23 @@ class GameTimer {
   void pauseTimer() {
     _timerRunning = false;
     _savedTimePassed = _timePassed;
+  }
+
+  int getTime() {
+    return msStart - _timePassed;
+  }
+
+  int getTimeNoNeg() {
+    final timeRemaining = getTime();
+    if (timeRemaining < 0) {
+      return 0;
+    } else {
+      return timeRemaining;
+    }
+  }
+
+  bool timerEnded() {
+    return _ended;
   }
 }
 
