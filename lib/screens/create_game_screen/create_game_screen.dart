@@ -1,3 +1,4 @@
+import 'package:boggle_flutter/bloc/app_bloc.dart';
 import 'package:boggle_flutter/constants/constants.dart';
 import 'package:boggle_flutter/screens/board_screen/board_screen.dart';
 import 'package:boggle_flutter/screens/create_game_screen/bloc/bloc.dart';
@@ -18,7 +19,9 @@ class CreateGame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => CreateGameBloc(),
+      create: (context) => CreateGameBloc(
+        appBloc: context.read<AppBloc>(),
+      ),
       child: const CreateGameMain(),
     );
   }
@@ -32,11 +35,11 @@ class CreateGameMain extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mqData = MediaQuery.of(context);
-    final notBarHeight = mqData.viewPadding.top;
+    final topHeight = mqData.viewPadding.top;
     final loadingO = loadingOverlay(
       message: 'Creating game...',
       screenWidth: mqData.size.width,
-      top: notBarHeight,
+      top: topHeight,
     );
     // TODO: Update to ensure only numbers can be entered
     final tc = TextEditingController();
@@ -49,10 +52,7 @@ class CreateGameMain extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute<void>(
-                builder: (context) => BoardScreen(
-                  gameCode: state.gameCode,
-                  playerCode: state.playerCode,
-                ),
+                builder: (context) => const BoardScreen(),
               ),
             );
           }

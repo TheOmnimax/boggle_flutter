@@ -116,12 +116,11 @@ class Complete extends BoardState {
   const Complete({
     required BoggleBoard boggleBoard,
     required BogglePlayer player,
-    required int timeRemaining,
     required String enteredWord,
   }) : super(
           boggleBoard: boggleBoard,
           player: player,
-          timeRemaining: timeRemaining,
+          timeRemaining: 0,
           enteredText: enteredWord,
         );
 
@@ -135,7 +134,6 @@ class Complete extends BoardState {
     return Complete(
       boggleBoard: boggleBoard ?? this.boggleBoard,
       player: player ?? this.player,
-      timeRemaining: timeRemaining ?? this.timeRemaining,
       enteredWord: enteredWord ?? this.enteredText,
     );
   }
