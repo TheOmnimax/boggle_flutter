@@ -1,6 +1,7 @@
 import 'package:boggle_flutter/screens/board_screen/bloc/board_bloc/bloc.dart';
 import 'package:boggle_flutter/screens/board_screen/bloc/timer_bloc/bloc.dart';
 import 'package:boggle_flutter/shared_widgets/general.dart';
+import 'package:boggle_flutter/shared_widgets/loading.dart';
 import 'package:boggle_flutter/utils/game/boggle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -65,7 +66,21 @@ class BoardScreenMain extends StatelessWidget {
     return BlocBuilder<BoardBloc, BoardState>(
       builder: (context, state) {
         if (state is Loading) {
-          return Text('Loading...');
+          return Scaffold(
+            body: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const [
+                bigLoading,
+                Text(
+                  'Loading game...',
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
+              ],
+            ),
+          );
         } else {
           return GameArea(
             child: Row(
@@ -74,9 +89,9 @@ class BoardScreenMain extends StatelessWidget {
               children: [
                 Column(
                   children: [
-                    Row(
+                    Column(
                       children: [
-                        Text('Room code:'),
+                        const Text('Room code:'),
                         Text(context.read<BoardBloc>().roomCode),
                       ],
                     ),
@@ -93,6 +108,7 @@ class BoardScreenMain extends StatelessWidget {
                 Column(
                   children: [
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Column(
                           children: [
@@ -100,7 +116,11 @@ class BoardScreenMain extends StatelessWidget {
                             Text(state.player.getApprovedWords().join('\n')),
                           ],
                         ),
+                        const SizedBox(
+                          width: 10,
+                        ),
                         Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text('Rejected'),
                             Text(state.player.getRejectedString()),

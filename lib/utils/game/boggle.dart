@@ -193,7 +193,7 @@ class BogglePlayer extends Player {
     final rejectedList = <String>[];
 
     for (final key in rejectedWords.keys) {
-      rejectedList.add('$key: ${rejectedWords[key]}');
+      rejectedList.add('$key: ${getEnumName(rejectedWords[key])}');
     }
 
     return rejectedList.join('\n');

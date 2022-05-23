@@ -1,5 +1,3 @@
-import 'package:boggle_flutter/screens/create_game_screen/bloc/bloc.dart';
-import 'package:boggle_flutter/screens/create_game_screen/create_game_screen.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class CreateGameState extends Equatable {
@@ -17,6 +15,15 @@ class MainState extends CreateGameState {
   @override
   MainState copyWith() {
     return const MainState();
+  }
+}
+
+class LoadingGame extends CreateGameState {
+  const LoadingGame();
+
+  @override
+  LoadingGame copyWith() {
+    return const LoadingGame();
   }
 }
 
