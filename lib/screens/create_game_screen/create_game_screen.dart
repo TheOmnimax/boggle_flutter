@@ -3,6 +3,7 @@ import 'package:boggle_flutter/screens/board_screen/board_screen.dart';
 import 'package:boggle_flutter/screens/create_game_screen/bloc/bloc.dart';
 import 'package:boggle_flutter/shared_widgets/buttons.dart';
 import 'package:boggle_flutter/shared_widgets/general.dart';
+import 'package:boggle_flutter/shared_widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -30,6 +31,13 @@ class CreateGameMain extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mqData = MediaQuery.of(context);
+    final notBarHeight = mqData.viewPadding.top;
+    final loadingO = loadingOverlay(
+      message: 'Creating game...',
+      screenWidth: mqData.size.width,
+      top: notBarHeight,
+    );
     // TODO: Update to ensure only numbers can be entered
     final tc = TextEditingController();
     int time = 90;
@@ -37,6 +45,7 @@ class CreateGameMain extends StatelessWidget {
       child: BlocListener<CreateGameBloc, CreateGameState>(
         listener: (context, state) {
           if (state is Joining) {
+            loadingO.remove();
             Navigator.push(
               context,
               MaterialPageRoute<void>(
@@ -54,7 +63,7 @@ class CreateGameMain extends StatelessWidget {
               children: [
                 Column(
                   children: [
-                    Text('Time (s)'),
+                    const Text('Time (s)'),
                     Container(
                       child: TextField(
                         onChanged: (value) {
@@ -67,11 +76,12 @@ class CreateGameMain extends StatelessWidget {
                 ),
                 Column(
                   children: [
-                    Text('Game board'),
+                    const Text('Game board'),
                     StartButton(
                         onPressed: () {
+                          Overlay.of(context)?.insert(loadingO);
                           context.read<CreateGameBloc>().add(
-                                Create(
+                                const Create(
                                   time: 90,
                                   width: 4,
                                   height: 4,
