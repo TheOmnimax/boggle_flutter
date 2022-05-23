@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:boggle_flutter/bloc/bloc.dart';
 import 'package:boggle_flutter/constants/constants.dart';
 import 'package:boggle_flutter/utils/game/boggle.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,8 +11,7 @@ import 'bloc.dart';
 
 class BoardBloc extends Bloc<BoardEvent, BoardState> {
   BoardBloc({
-    required this.roomCode,
-    this.hostId = '',
+    required this.appBloc,
   }) : super(const Loading()) {
     on<LoadGame>(_loadGame);
     on<StartGame>(_startGame);
@@ -22,15 +22,15 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     on<ViewResults>(_viewResults);
   }
 
-  final String roomCode;
-  final String hostId;
+  final AppBloc appBloc;
+
   GameStatus gameStatus = GameStatus.pre;
 
   Future checkStarted() async {
     final uri = Uri.parse(baseUrl + 'is-started');
 
     final body = json.encode({
-      'room_code': roomCode,
+      'room_code': appBloc.state.roomCode,
     });
 
     final response = await http.post(
@@ -58,8 +58,8 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     final uri = Uri.parse(baseUrl + 'join-game');
 
     final body = json.encode({
-      'room_code': roomCode,
-      'player_id': hostId,
+      'room_code': appBloc.state.roomCode,
+      'player_id': appBloc.state.playerId,
     });
 
     final response = await http.post(
@@ -99,8 +99,8 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     final uri = Uri.parse(baseUrl + 'start-game');
 
     final body = json.encode({
-      'room_code': roomCode,
-      'player_id': state.player.id,
+      'room_code': appBloc.state.roomCode,
+      'player_id': appBloc.state.playerId,
     });
 
     final response = await http.post(
@@ -119,7 +119,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     final uri = Uri.parse(baseUrl + 'get-game-data');
 
     final body = json.encode({
-      'room_code': roomCode,
+      'room_code': appBloc.state.roomCode,
     });
 
     final response = await http.post(
@@ -154,7 +154,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     final uri = Uri.parse(baseUrl + 'add-word');
 
     final body = json.encode({
-      'room_code': roomCode,
+      'room_code': appBloc.state.roomCode,
       'player_id': state.player.id,
       'timestamp': DateTime.now().millisecondsSinceEpoch,
       'word': event.word,
@@ -233,13 +233,19 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     }
   }
 
-  Future _endGame(EndGame event, Emitter<BoardState> emit) async {}
+  Future _endGame(EndGame event, Emitter<BoardState> emit) async {
+    emit(Complete(
+      boggleBoard: state.boggleBoard,
+      player: state.player,
+      enteredWord: state.enteredText,
+    ));
+  }
 
   Future _viewResults(ViewResults event, Emitter<BoardState> emit) async {
     final uri = Uri.parse(baseUrl + 'get-results');
 
     final body = json.encode({
-      'room_code': roomCode,
+      'room_code': appBloc.state.roomCode,
     });
 
     final response = await http.post(

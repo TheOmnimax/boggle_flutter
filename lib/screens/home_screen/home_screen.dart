@@ -40,10 +40,7 @@ class HomeScreenMain extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute<void>(
-                builder: (context) => BoardScreen(
-                  gameCode: state.gameCode,
-                  playerCode: state.playerCode,
-                ),
+                builder: (context) => BoardScreen(),
               ),
             );
           }
@@ -110,10 +107,7 @@ class HomeScreenMain extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute<void>(
-                                    builder: (context) => BoardScreen(
-                                      gameCode: gameCode,
-                                      playerCode: '',
-                                    ),
+                                    builder: (context) => BoardScreen(),
                                   ),
                                 );
                               },
