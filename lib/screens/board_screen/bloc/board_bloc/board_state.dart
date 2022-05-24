@@ -138,3 +138,30 @@ class Complete extends BoardState {
     );
   }
 }
+
+class ReadyForResults extends BoardState {
+  const ReadyForResults({
+    required BoggleBoard boggleBoard,
+    required BogglePlayer player,
+    required String enteredWord,
+  }) : super(
+          boggleBoard: boggleBoard,
+          player: player,
+          timeRemaining: 0,
+          enteredText: enteredWord,
+        );
+
+  @override
+  ReadyForResults copyWith({
+    BoggleBoard? boggleBoard,
+    BogglePlayer? player,
+    int? timeRemaining,
+    String? enteredWord,
+  }) {
+    return ReadyForResults(
+      boggleBoard: boggleBoard ?? this.boggleBoard,
+      player: player ?? this.player,
+      enteredWord: enteredWord ?? this.enteredText,
+    );
+  }
+}
