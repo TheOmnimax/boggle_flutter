@@ -1,6 +1,7 @@
 import 'package:boggle_flutter/bloc/bloc.dart';
 import 'package:boggle_flutter/screens/board_screen/bloc/board_bloc/bloc.dart';
 import 'package:boggle_flutter/screens/board_screen/bloc/timer_bloc/bloc.dart';
+import 'package:boggle_flutter/screens/results_screen/results_screen.dart';
 import 'package:boggle_flutter/shared_widgets/general.dart';
 import 'package:boggle_flutter/shared_widgets/loading.dart';
 import 'package:boggle_flutter/shared_widgets/show_popup.dart';
@@ -22,7 +23,7 @@ class TimerComponent extends StatelessWidget {
     return BlocProvider(
       create: (context) => TimerBloc(
         boardBloc: boardBlocWatch,
-        startTime: 5,
+        startTime: boardBlocWatch.state.timeRemaining,
       )..add(const LoadTimer()),
       child: BlocBuilder<TimerBloc, TimerState>(
         builder: (context, state) {
@@ -57,39 +58,57 @@ class BoardScreenMain extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mqData = MediaQuery.of(context);
+    final topHeight = mqData.viewPadding.top;
+    OverlayEntry overlay = overlayPopup(
+      screenWidth: mqData.size.width,
+      top: topHeight,
+      child: Column(
+        children: [
+          const Text('Time\'s up!'),
+          Text('Please wait...'),
+        ],
+      ),
+    );
     final boardBloc = context.read<BoardBloc>();
+    final boardBlocWatch = context.watch<BoardBloc>();
 
+    // TODO: Update to BlocConsumer
     return BlocListener<BoardBloc, BoardState>(
       listener: (context, state) {
-        final mqData = MediaQuery.of(context);
+        print('State: $state');
 
-        final topHeight = mqData.viewPadding.top;
-        OverlayEntry? completeOverlay;
-        completeOverlay = overlayPopup(
-          screenWidth: mqData.size.width,
-          top: topHeight,
-          child: Column(
-            children: [
-              Text('Time\'s up!'),
-              TextButton(
-                onPressed: () {
-                  completeOverlay?.remove();
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (context) => BoardScreen(),
-                    ),
-                  );
-                },
-                child: Text('See results'),
-              ),
-            ],
-          ),
-        );
+        // TODO: QUESTION: Is it possible to update the overlay in a state change?
         if (state is Complete) {
-          Overlay.of(context)?.insert(completeOverlay);
+          Overlay.of(context)?.insert(overlay);
+        } else if (state is ReadyForResults) {
+          overlay.remove();
+          overlay = overlayPopup(
+            screenWidth: mqData.size.width,
+            top: topHeight,
+            child: Column(
+              children: [
+                const Text('Time\'s up!'),
+                TextButton(
+                  onPressed: () {
+                    overlay.remove();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (context) => const ResultsScreen(),
+                      ),
+                    );
+                  },
+                  child: const Text('See results'),
+                ),
+              ],
+            ),
+          );
+          Overlay.of(context)?.insert(overlay);
+        } else {
+          overlay.remove();
         }
+        if (state is Complete) {}
       },
       child: BlocBuilder<BoardBloc, BoardState>(
         builder: (context, state) {
@@ -243,5 +262,41 @@ class WordEntry extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+class CompleteButton extends StatelessWidget {
+  const CompleteButton({
+    required this.state,
+    required this.completeOverlay,
+    Key? key,
+  }) : super(key: key);
+
+  final BoardState state;
+  final OverlayEntry? completeOverlay;
+
+  @override
+  Widget build(BuildContext context) {
+    if (state is Complete) {
+      print('State is Complete');
+      return Text('Please wait...');
+    } else if (state is ReadyForResults) {
+      print('STATE IS READY FOR RESULTS');
+      return TextButton(
+        onPressed: () {
+          completeOverlay?.remove();
+
+          Navigator.push(
+            context,
+            MaterialPageRoute<void>(
+              builder: (context) => const ResultsScreen(),
+            ),
+          );
+        },
+        child: const Text('See results'),
+      );
+    } else {
+      return Text('Error! State is $state');
+    }
   }
 }

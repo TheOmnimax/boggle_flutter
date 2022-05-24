@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:boggle_flutter/bloc/bloc.dart';
 import 'package:boggle_flutter/constants/constants.dart';
 import 'package:boggle_flutter/utils/game/boggle.dart';
+import 'package:boggle_flutter/utils/http.dart';
+import 'package:boggle_flutter/utils/timing.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 
@@ -20,32 +22,43 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     on<AddWord>(_addWord);
     on<EndGame>(_endGame);
     on<ViewResults>(_viewResults);
+    on<ResultsReady>(_resultsReady);
   }
 
   final AppBloc appBloc;
 
+  // TODO: QUESTION: Should I store this in the bloc, or the state?
   GameStatus gameStatus = GameStatus.pre;
 
   Future checkStarted() async {
-    final uri = Uri.parse(baseUrl + 'is-started');
-
-    final body = json.encode({
-      'room_code': appBloc.state.roomCode,
-    });
-
-    final response = await http.post(
-      uri,
-      headers: sendHeaders,
-      body: body,
-    );
-
-    final responseBody = json.decode(response.body) as Map<String, dynamic>;
-    final gameRunning = responseBody['running'] as bool;
-    if (gameRunning) {
-      if (gameStatus == GameStatus.pre) {
-        add(const GameStarted());
+    if (gameStatus == GameStatus.pre) {
+      final responseBody = await httpPost(
+        uri: baseUrl + 'is-started',
+        body: {
+          'room_code': appBloc.state.roomCode,
+        },
+      );
+      final gameRunning = responseBody['running'] as bool;
+      if (gameRunning) {
+        if (gameStatus == GameStatus.pre) {
+          add(const GameStarted());
+        }
+      } else {}
+    } else {
+      final responseBody = await httpPost(
+        uri: baseUrl + 'check-in',
+        body: {
+          'room_code': appBloc.state.roomCode,
+          'player_id': appBloc.state.playerId,
+          'timestamp': getEpochTime(),
+        },
+      );
+      print(responseBody);
+      final gameEnded = responseBody['ended'] as bool;
+      if (gameEnded) {
+        add(const ResultsReady());
       }
-    } else {}
+    }
   }
 
   // TODO: Find how to stop when game is over or exited
@@ -90,7 +103,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     emit(Ready(
       boggleBoard: boggleBoard,
       player: bogglePlayer,
-      timeRemaining: 90,
+      timeRemaining: gameTime,
     ));
     _serverQuery();
   }
@@ -139,6 +152,16 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
         timeRemaining: state.timeRemaining,
         enteredWord: state.enteredText,
       ));
+
+      // player-start
+      final playerStartResponse = httpPost(
+        uri: baseUrl + 'player-start',
+        body: {
+          'room_code': appBloc.state.roomCode,
+          'player_id': appBloc.state.playerId,
+          'timestamp': getEpochTime(),
+        },
+      );
     }
   }
 
@@ -235,6 +258,16 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
 
   Future _endGame(EndGame event, Emitter<BoardState> emit) async {
     emit(Complete(
+      boggleBoard: state.boggleBoard,
+      player: state.player,
+      enteredWord: state.enteredText,
+    ));
+    gameStatus = GameStatus.post;
+  }
+
+  void _resultsReady(ResultsReady event, Emitter<BoardState> emit) {
+    print('Results ready!');
+    emit(ReadyForResults(
       boggleBoard: state.boggleBoard,
       player: state.player,
       enteredWord: state.enteredText,

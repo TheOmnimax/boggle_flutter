@@ -45,6 +45,10 @@ class EndGame extends BoardEvent {
   const EndGame();
 }
 
+class ResultsReady extends BoardEvent {
+  const ResultsReady();
+}
+
 class ViewResults extends BoardEvent {
   const ViewResults();
 }
