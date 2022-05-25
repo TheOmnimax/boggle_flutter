@@ -1,13 +1,14 @@
 import 'package:boggle_flutter/bloc/bloc.dart';
+import 'package:boggle_flutter/constants/constants.dart';
 import 'package:boggle_flutter/screens/board_screen/bloc/board_bloc/bloc.dart';
 import 'package:boggle_flutter/screens/board_screen/bloc/timer_bloc/bloc.dart';
 import 'package:boggle_flutter/screens/results_screen/results_screen.dart';
 import 'package:boggle_flutter/shared_widgets/general.dart';
 import 'package:boggle_flutter/shared_widgets/loading.dart';
-import 'package:boggle_flutter/shared_widgets/show_popup.dart';
 import 'package:boggle_flutter/utils/game/boggle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class TimerComponent extends StatelessWidget {
   const TimerComponent({
@@ -53,62 +54,111 @@ class BoardScreen extends StatelessWidget {
   }
 }
 
-class BoardScreenMain extends StatelessWidget {
-  const BoardScreenMain({Key? key}) : super(key: key);
+class WordEntry extends StatelessWidget {
+  const WordEntry({
+    required this.onChanged,
+    required this.text,
+    Key? key,
+  }) : super(key: key);
+
+  final Function(String) onChanged;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
-    final mqData = MediaQuery.of(context);
-    final topHeight = mqData.viewPadding.top;
-    OverlayEntry overlay = overlayPopup(
-      screenWidth: mqData.size.width,
-      top: topHeight,
-      child: Column(
-        children: [
-          const Text('Time\'s up!'),
-          Text('Please wait...'),
-        ],
-      ),
-    );
-    final boardBloc = context.read<BoardBloc>();
-    final boardBlocWatch = context.watch<BoardBloc>();
+    print('Text: $text');
+    final tc = TextEditingController();
+    tc.text = text;
 
-    // TODO: Update to BlocConsumer
+    tc
+      ..text = text
+      ..selection =
+          TextSelection(baseOffset: text.length, extentOffset: text.length);
+    return Column(
+      children: [
+        const Text('Enter word:'),
+        SizedBox(
+          width: 50,
+          child: TextFormField(
+            controller: tc,
+            onChanged: onChanged,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class CompleteButton extends StatelessWidget {
+  const CompleteButton({
+    required this.state,
+    required this.completeOverlay,
+    Key? key,
+  }) : super(key: key);
+
+  final BoardState state;
+  final OverlayEntry? completeOverlay;
+
+  @override
+  Widget build(BuildContext context) {
+    if (state is Complete) {
+      print('State is Complete');
+      return Text('Please wait...');
+    } else if (state is ReadyForResults) {
+      print('STATE IS READY FOR RESULTS');
+      return TextButton(
+        onPressed: () {
+          completeOverlay?.remove();
+
+          Navigator.push(
+            context,
+            MaterialPageRoute<void>(
+              builder: (context) => const ResultsScreen(),
+            ),
+          );
+        },
+        child: const Text('See results'),
+      );
+    } else {
+      return Text('Error! State is $state');
+    }
+  }
+}
+
+class BoardScreenMain extends StatefulWidget {
+  const BoardScreenMain({Key? key}) : super(key: key);
+
+  @override
+  State<BoardScreenMain> createState() => _BoardScreenMainState();
+}
+
+class _BoardScreenMainState extends State<BoardScreenMain> {
+  Alert? popup;
+
+  @override
+  Widget build(BuildContext context) {
     return BlocListener<BoardBloc, BoardState>(
       listener: (context, state) {
         print('State: $state');
 
-        // TODO: QUESTION: Is it possible to update the overlay in a state change?
         if (state is Complete) {
-          Overlay.of(context)?.insert(overlay);
-        } else if (state is ReadyForResults) {
-          overlay.remove();
-          overlay = overlayPopup(
-            screenWidth: mqData.size.width,
-            top: topHeight,
-            child: Column(
-              children: [
-                const Text('Time\'s up!'),
-                TextButton(
-                  onPressed: () {
-                    overlay.remove();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (context) => const ResultsScreen(),
-                      ),
-                    );
-                  },
-                  child: const Text('See results'),
-                ),
-              ],
-            ),
+          popup = Alert(
+            context: context,
+            title: "Time's up!",
+            desc: "Please wait...",
+            style: popupStyle,
           );
-          Overlay.of(context)?.insert(overlay);
-        } else {
-          overlay.remove();
-        }
-        if (state is Complete) {}
+          popup?.show();
+        } else if (state is ReadyForResults) {
+          popup?.dismiss();
+          popup = Alert(
+            context: context,
+            title: "RFLUTTER ALERT",
+            desc: "Ready!.",
+            style: popupStyle,
+          );
+          popup?.show();
+        } else {}
       },
       child: BlocBuilder<BoardBloc, BoardState>(
         builder: (context, state) {
@@ -227,76 +277,5 @@ class BoardScreenMain extends StatelessWidget {
         },
       ),
     );
-  }
-}
-
-class WordEntry extends StatelessWidget {
-  const WordEntry({
-    required this.onChanged,
-    required this.text,
-    Key? key,
-  }) : super(key: key);
-
-  final Function(String) onChanged;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    print('Text: $text');
-    final tc = TextEditingController();
-    tc.text = text;
-
-    tc
-      ..text = text
-      ..selection =
-          TextSelection(baseOffset: text.length, extentOffset: text.length);
-    return Column(
-      children: [
-        const Text('Enter word:'),
-        SizedBox(
-          width: 50,
-          child: TextFormField(
-            controller: tc,
-            onChanged: onChanged,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class CompleteButton extends StatelessWidget {
-  const CompleteButton({
-    required this.state,
-    required this.completeOverlay,
-    Key? key,
-  }) : super(key: key);
-
-  final BoardState state;
-  final OverlayEntry? completeOverlay;
-
-  @override
-  Widget build(BuildContext context) {
-    if (state is Complete) {
-      print('State is Complete');
-      return Text('Please wait...');
-    } else if (state is ReadyForResults) {
-      print('STATE IS READY FOR RESULTS');
-      return TextButton(
-        onPressed: () {
-          completeOverlay?.remove();
-
-          Navigator.push(
-            context,
-            MaterialPageRoute<void>(
-              builder: (context) => const ResultsScreen(),
-            ),
-          );
-        },
-        child: const Text('See results'),
-      );
-    } else {
-      return Text('Error! State is $state');
-    }
   }
 }
