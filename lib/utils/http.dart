@@ -9,8 +9,6 @@ Future<Map<String, dynamic>> httpPost({
   required Map<String, dynamic> body,
 }) async {
   final encodedBody = json.encode(body);
-  print(uri);
-  print(encodedBody);
 
   final response = await http.post(
     Uri.parse(uri),
@@ -19,7 +17,6 @@ Future<Map<String, dynamic>> httpPost({
   );
 
   final responseBody = json.decode(response.body) as Map<String, dynamic>;
-  print(responseBody);
 
   return responseBody;
 }
