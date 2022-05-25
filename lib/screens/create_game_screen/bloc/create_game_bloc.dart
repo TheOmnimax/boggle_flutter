@@ -63,7 +63,7 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
       roomCode: gameCode,
       width: event.width,
       height: event.height,
-      time: 5,
+      time: 5, // TIME SENT TO SERVER
     );
 
     final statusCode = response.statusCode;
