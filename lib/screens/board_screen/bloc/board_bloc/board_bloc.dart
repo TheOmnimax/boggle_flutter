@@ -53,7 +53,6 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
           'timestamp': getEpochTime(),
         },
       );
-      print(responseBody);
       final gameEnded = responseBody['ended'] as bool;
       if (gameEnded) {
         add(const ResultsReady());
@@ -172,7 +171,6 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
   }
 
   Future _addWord(AddWord event, Emitter<BoardState> emit) async {
-    print('Adding word...');
     final word = event.word;
     final uri = Uri.parse(baseUrl + 'add-word');
 
@@ -191,7 +189,6 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
 
     final statusCode = response.statusCode;
     final responseBody = json.decode(response.body) as Map<String, dynamic>;
-    print(responseBody);
 
     final reasonString = responseBody['reason'] as String;
     final player =
@@ -266,7 +263,6 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
   }
 
   void _resultsReady(ResultsReady event, Emitter<BoardState> emit) {
-    print('Results ready!');
     emit(ReadyForResults(
       boggleBoard: state.boggleBoard,
       player: state.player,

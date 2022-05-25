@@ -66,7 +66,6 @@ class WordEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Text: $text');
     final tc = TextEditingController();
     tc.text = text;
 
@@ -89,42 +88,6 @@ class WordEntry extends StatelessWidget {
   }
 }
 
-class CompleteButton extends StatelessWidget {
-  const CompleteButton({
-    required this.state,
-    required this.completeOverlay,
-    Key? key,
-  }) : super(key: key);
-
-  final BoardState state;
-  final OverlayEntry? completeOverlay;
-
-  @override
-  Widget build(BuildContext context) {
-    if (state is Complete) {
-      print('State is Complete');
-      return Text('Please wait...');
-    } else if (state is ReadyForResults) {
-      print('STATE IS READY FOR RESULTS');
-      return TextButton(
-        onPressed: () {
-          completeOverlay?.remove();
-
-          Navigator.push(
-            context,
-            MaterialPageRoute<void>(
-              builder: (context) => const ResultsScreen(),
-            ),
-          );
-        },
-        child: const Text('See results'),
-      );
-    } else {
-      return Text('Error! State is $state');
-    }
-  }
-}
-
 class BoardScreenMain extends StatefulWidget {
   const BoardScreenMain({Key? key}) : super(key: key);
 
@@ -139,13 +102,12 @@ class _BoardScreenMainState extends State<BoardScreenMain> {
   Widget build(BuildContext context) {
     return BlocListener<BoardBloc, BoardState>(
       listener: (context, state) {
-        print('State: $state');
-
         if (state is Complete) {
           popup = Alert(
             context: context,
-            title: "Time's up!",
-            desc: "Please wait...",
+            title: 'Time\'s up!',
+            desc: 'Please wait for the results to be calculated...',
+            buttons: [],
             style: popupStyle,
           );
           popup?.show();
@@ -153,8 +115,25 @@ class _BoardScreenMainState extends State<BoardScreenMain> {
           popup?.dismiss();
           popup = Alert(
             context: context,
-            title: "RFLUTTER ALERT",
-            desc: "Ready!.",
+            title: 'Results ready',
+            desc: 'Results are ready! Click the button below to view them.',
+            buttons: [
+              DialogButton(
+                child: const Text(
+                  'See results',
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (context) => const ResultsScreen(),
+                    ),
+                  );
+                },
+              )
+            ],
             style: popupStyle,
           );
           popup?.show();
@@ -233,7 +212,6 @@ class _BoardScreenMainState extends State<BoardScreenMain> {
                                 onChanged: (String word) {
                                   if (word.contains('\n')) {
                                     word.replaceAll('\n', '');
-                                    print('Entered: $word');
                                     context
                                         .read<BoardBloc>()
                                         .add(AddWord(word: word));

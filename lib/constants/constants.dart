@@ -1,3 +1,5 @@
+import 'package:rflutter_alert/rflutter_alert.dart';
+
 export 'enums.dart';
 export 'regex.dart';
 export 'theme_data.dart';
@@ -11,3 +13,7 @@ const sendHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Content-Type': 'application/json; charset=UTF-8',
 };
+
+const popupStyle = AlertStyle(
+  animationDuration: Duration(seconds: 0),
+);
