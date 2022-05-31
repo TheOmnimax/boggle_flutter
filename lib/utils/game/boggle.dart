@@ -216,29 +216,3 @@ class BogglePlayer extends Player {
     return bogglePlayer;
   }
 }
-
-// class BoggleGame extends Game {
-//   const BoggleGame({
-//     required this.boggleBoard,
-//     // required this.timer,
-//     required this.roomCode,
-//     required List<Player> players,
-//   }) : super(players: players);
-//
-//   final BoggleBoard boggleBoard;
-//   // final GameTimer timer;
-//   final String roomCode;
-//
-//   static BoggleGame loadingBoard() {
-//     return const BoggleGame(
-//       boggleBoard: const BoggleBoard(
-//         spaces: <List<String>>[],
-//         tableRows: [],
-//
-//       ),
-//       // timer: GameTimer(msStart: 0),
-//       roomCode: '',
-//       players: [],
-//     );
-//   }
-// }
