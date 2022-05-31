@@ -4,9 +4,12 @@ import 'package:boggle_flutter/screens/board_screen/board_screen.dart';
 import 'package:boggle_flutter/screens/create_game_screen/bloc/bloc.dart';
 import 'package:boggle_flutter/shared_widgets/buttons.dart';
 import 'package:boggle_flutter/shared_widgets/general.dart';
+import 'package:boggle_flutter/shared_widgets/input.dart';
 import 'package:boggle_flutter/shared_widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../bloc/app_event.dart';
 
 class CreateGame extends StatelessWidget {
   const CreateGame({
@@ -44,6 +47,7 @@ class CreateGameMain extends StatelessWidget {
     // TODO: Update to ensure only numbers can be entered
     final tc = TextEditingController();
     int time = 90;
+    String name = '';
     return GameArea(
       child: BlocListener<CreateGameBloc, CreateGameState>(
         listener: (context, state) {
@@ -59,38 +63,52 @@ class CreateGameMain extends StatelessWidget {
         },
         child: BlocBuilder<CreateGameBloc, CreateGameState>(
           builder: (context, state) {
-            return Row(
+            return Column(
               children: [
-                Column(
+                NameInput(
+                  onChanged: (value) {
+                    name = value;
+                  },
+                ),
+                Row(
                   children: [
-                    const Text('Time (s)'),
-                    Container(
-                      child: TextField(
-                        onChanged: (value) {
-                          time = num.tryParse(value)?.toInt() ?? 90;
-                        },
-                      ),
-                      width: 200,
+                    Column(
+                      children: [
+                        const Text('Time (s)'),
+                        SizedBox(
+                          child: TextField(
+                            onChanged: (value) {
+                              time = num.tryParse(value)?.toInt() ?? 90;
+                            },
+                          ),
+                          width: 200,
+                        ),
+                      ],
                     ),
+                    Column(
+                      children: [
+                        const Text('Game board'),
+                        StartButton(
+                            onPressed: () {
+                              Overlay.of(context)?.insert(loadingO);
+
+                              context
+                                  .read<AppBloc>()
+                                  .add(AddPlayerName(name: name));
+                              context.read<CreateGameBloc>().add(
+                                    Create(
+                                      time: 90,
+                                      width: 4,
+                                      height: 4,
+                                      name: name,
+                                    ),
+                                  );
+                            },
+                            text: '4x4'),
+                      ],
+                    )
                   ],
                 ),
-                Column(
-                  children: [
-                    const Text('Game board'),
-                    StartButton(
-                        onPressed: () {
-                          Overlay.of(context)?.insert(loadingO);
-                          context.read<CreateGameBloc>().add(
-                                const Create(
-                                  time: 90,
-                                  width: 4,
-                                  height: 4,
-                                ),
-                              );
-                        },
-                        text: '4x4'),
-                  ],
-                )
               ],
             );
           },

@@ -8,15 +8,25 @@ class AppOpened extends AppEvent {
   const AppOpened();
 }
 
+class AddPlayerName extends AppEvent {
+  const AddPlayerName({
+    required this.name,
+  });
+
+  final String name;
+}
+
 class AddGameInfo extends AppEvent {
   const AddGameInfo({
     required this.roomCode,
     required this.playerId,
+    required this.playerName,
     required this.isHost,
   });
 
   final String roomCode;
   final String playerId;
+  final String playerName;
   final bool isHost;
 }
 

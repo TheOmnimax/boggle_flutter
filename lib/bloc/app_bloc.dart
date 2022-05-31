@@ -15,6 +15,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<Logout>(_logout);
     on<Register>(_register);
     on<LoginError>(_loginError);
+    on<AddPlayerName>(_addPlayerName);
     on<AddGameInfo>(_addGameInfo);
   }
 
@@ -26,10 +27,17 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     return token;
   }
 
+  void _addPlayerName(AddPlayerName event, Emitter<AppState> emit) {
+    emit(state.copyWith(
+      playerName: event.name,
+    ));
+  }
+
   Future _addGameInfo(AddGameInfo event, Emitter<AppState> emit) async {
     emit(state.copyWith(
       roomCode: event.roomCode,
       playerId: event.playerId,
+      playerName: event.playerName,
       isHost: event.isHost,
     ));
   }
