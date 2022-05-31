@@ -6,20 +6,20 @@ abstract class BoardState extends Equatable {
     required this.boggleBoard,
     required this.player,
     required this.timeRemaining,
-    required this.enteredWord,
+    required this.enteredText,
   });
 
   final BoggleBoard boggleBoard;
   final BogglePlayer player;
   final int timeRemaining;
-  final String enteredWord;
+  final String enteredText;
 
   @override
   List<Object?> get props => [
         boggleBoard,
         player,
         timeRemaining,
-        enteredWord,
+        enteredText,
       ];
 
   BoardState copyWith({
@@ -42,7 +42,7 @@ class Loading extends BoardState {
             name: '',
           ),
           timeRemaining: 0,
-          enteredWord: '',
+          enteredText: '',
         );
 
   @override
@@ -65,7 +65,7 @@ class Ready extends BoardState {
           boggleBoard: boggleBoard,
           player: player,
           timeRemaining: timeRemaining,
-          enteredWord: '',
+          enteredText: '',
         );
 
   @override
@@ -93,7 +93,7 @@ class Playing extends BoardState {
           boggleBoard: boggleBoard,
           player: player,
           timeRemaining: timeRemaining,
-          enteredWord: enteredWord,
+          enteredText: enteredWord,
         );
 
   @override
@@ -107,7 +107,7 @@ class Playing extends BoardState {
       boggleBoard: boggleBoard ?? this.boggleBoard,
       player: player ?? this.player,
       timeRemaining: timeRemaining ?? this.timeRemaining,
-      enteredWord: enteredWord ?? this.enteredWord,
+      enteredWord: enteredWord ?? this.enteredText,
     );
   }
 }
@@ -116,13 +116,12 @@ class Complete extends BoardState {
   const Complete({
     required BoggleBoard boggleBoard,
     required BogglePlayer player,
-    required int timeRemaining,
     required String enteredWord,
   }) : super(
           boggleBoard: boggleBoard,
           player: player,
-          timeRemaining: timeRemaining,
-          enteredWord: enteredWord,
+          timeRemaining: 0,
+          enteredText: enteredWord,
         );
 
   @override
@@ -135,8 +134,34 @@ class Complete extends BoardState {
     return Complete(
       boggleBoard: boggleBoard ?? this.boggleBoard,
       player: player ?? this.player,
-      timeRemaining: timeRemaining ?? this.timeRemaining,
-      enteredWord: enteredWord ?? this.enteredWord,
+      enteredWord: enteredWord ?? this.enteredText,
+    );
+  }
+}
+
+class ReadyForResults extends BoardState {
+  const ReadyForResults({
+    required BoggleBoard boggleBoard,
+    required BogglePlayer player,
+    required String enteredWord,
+  }) : super(
+          boggleBoard: boggleBoard,
+          player: player,
+          timeRemaining: 0,
+          enteredText: enteredWord,
+        );
+
+  @override
+  ReadyForResults copyWith({
+    BoggleBoard? boggleBoard,
+    BogglePlayer? player,
+    int? timeRemaining,
+    String? enteredWord,
+  }) {
+    return ReadyForResults(
+      boggleBoard: boggleBoard ?? this.boggleBoard,
+      player: player ?? this.player,
+      enteredWord: enteredWord ?? this.enteredText,
     );
   }
 }

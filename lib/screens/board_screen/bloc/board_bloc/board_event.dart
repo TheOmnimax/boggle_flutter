@@ -1,4 +1,3 @@
-import 'package:boggle_flutter/screens/board_screen/bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class BoardEvent extends Equatable {
@@ -16,6 +15,21 @@ class StartGame extends BoardEvent {
   const StartGame();
 }
 
+class GameStarted extends BoardEvent {
+  const GameStarted();
+}
+
+class EnteredText extends BoardEvent {
+  const EnteredText({
+    required this.text,
+  });
+
+  final String text;
+
+  @override
+  List<Object?> get props => [text];
+}
+
 class AddWord extends BoardEvent {
   const AddWord({
     required this.word,
@@ -29,6 +43,10 @@ class AddWord extends BoardEvent {
 
 class EndGame extends BoardEvent {
   const EndGame();
+}
+
+class ResultsReady extends BoardEvent {
+  const ResultsReady();
 }
 
 class ViewResults extends BoardEvent {
