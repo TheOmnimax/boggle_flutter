@@ -15,8 +15,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<Logout>(_logout);
     on<Register>(_register);
     on<LoginError>(_loginError);
-    on<AddPlayerName>(_addPlayerName);
+    on<AddPlayer>(_addPlayer);
     on<AddGameInfo>(_addGameInfo);
+    on<JoinedGame>(_joinedGame);
   }
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -27,10 +28,14 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     return token;
   }
 
-  void _addPlayerName(AddPlayerName event, Emitter<AppState> emit) {
+  void _joinedGame(JoinedGame event, Emitter<AppState> emit) {
     emit(state.copyWith(
-      playerName: event.name,
+      playerId: event.playerId,
     ));
+  }
+
+  void _addPlayer(AddPlayer event, Emitter<AppState> emit) {
+    emit(state.copyWith(playerName: event.name, roomCode: event.roomCode));
   }
 
   Future _addGameInfo(AddGameInfo event, Emitter<AppState> emit) async {

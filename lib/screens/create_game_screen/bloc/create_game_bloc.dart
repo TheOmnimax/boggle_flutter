@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:boggle_flutter/bloc/bloc.dart';
 import 'package:boggle_flutter/constants/constants.dart';
+import 'package:boggle_flutter/utils/http.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 
@@ -17,15 +18,8 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
   final AppBloc appBloc;
 
   Future<String> _createRoom() async {
-    final uri = Uri.parse(baseUrl + 'create-room');
-
-    final response = await http.post(
-      uri,
-      headers: sendHeaders,
-    );
-
-    final statusCode = response.statusCode;
-    final responseBody = json.decode(response.body) as Map<String, dynamic>;
+    print('Creating room...');
+    final responseBody = await httpPost(uri: baseUrl + 'create-room', body: {});
     final gameCode = responseBody['room_code'] as String;
     return gameCode;
   }
