@@ -105,9 +105,10 @@ class HomeScreenMain extends StatelessWidget {
                             TextButton(
                               child: const Text('join'),
                               onPressed: () {
-                                context
-                                    .read<AppBloc>()
-                                    .add(AddPlayerName(name: name));
+                                context.read<AppBloc>().add(AddPlayer(
+                                      roomCode: gameCode,
+                                      name: name,
+                                    ));
                                 //   context
                                 //       .read<HomeBloc>()
                                 //       .add(JoinGame(gameCode: gameCode));

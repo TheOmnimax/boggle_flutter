@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:boggle_flutter/bloc/app_bloc.dart';
+import 'package:boggle_flutter/bloc/app_event.dart';
 import 'package:boggle_flutter/constants/constants.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
@@ -35,6 +36,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(const JoinError(results: 'Game not found'));
     } else {
       final playerCode = responseBody['player_id'] as String;
+      print('Player ID: $playerCode');
+      appBloc.add(JoinedGame(playerId: playerCode));
       emit(Joining(
         gameCode: event.gameCode,
         playerCode: playerCode,

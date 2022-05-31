@@ -92,9 +92,11 @@ class CreateGameMain extends StatelessWidget {
                             onPressed: () {
                               Overlay.of(context)?.insert(loadingO);
 
-                              context
-                                  .read<AppBloc>()
-                                  .add(AddPlayerName(name: name));
+                              context.read<AppBloc>().add(AddPlayer(
+                                    roomCode:
+                                        '', // TODO: Make so don't have to provide room code
+                                    name: name,
+                                  ));
                               context.read<CreateGameBloc>().add(
                                     Create(
                                       time: 90,

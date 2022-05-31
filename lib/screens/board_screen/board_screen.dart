@@ -169,6 +169,8 @@ class _BoardScreenMainState extends State<BoardScreenMain> {
                         children: [
                           const Text('Room code:'),
                           Text(context.read<AppBloc>().state.roomCode),
+                          Text(
+                              'Player code: ${context.read<AppBloc>().state.playerId}')
                         ],
                       ),
                       Row(
@@ -238,7 +240,8 @@ class _BoardScreenMainState extends State<BoardScreenMain> {
                             onPressed: () {
                               context.read<BoardBloc>().add(const StartGame());
                             },
-                            child: const Text('Start'),
+                            child:
+                                const Text('Start'), // TODO: Hide for non-host
                           );
                         } else if (state is Complete) {
                           return const Text('Done!');

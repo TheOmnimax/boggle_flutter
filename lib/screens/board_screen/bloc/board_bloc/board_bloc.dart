@@ -88,6 +88,8 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     final gameTime = responseBody['time'] as int;
     final playerId = responseBody['player_id'] as String;
     // final boardRaw = responseBody['board'] as List<dynamic>;
+
+    appBloc.add(JoinedGame(playerId: playerId));
     final boggleBoard = BoggleBoard.createHiddenBoard(
       width: width,
       height: height,

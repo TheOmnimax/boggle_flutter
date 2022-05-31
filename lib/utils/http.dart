@@ -9,7 +9,7 @@ Future<Map<String, dynamic>> httpPost({
   required Map<String, dynamic> body,
 }) async {
   final encodedBody = json.encode(body);
-
+  print('Sending response...');
   final response = await http.post(
     Uri.parse(uri),
     headers: sendHeaders,
@@ -17,6 +17,6 @@ Future<Map<String, dynamic>> httpPost({
   );
 
   final responseBody = json.decode(response.body) as Map<String, dynamic>;
-
+  print('Received!');
   return responseBody;
 }
