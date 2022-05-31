@@ -35,6 +35,7 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
     required int width,
     required int height,
     required int time,
+    required String name,
   }) async {
     final uri = Uri.parse(baseUrl + 'create-game');
 
@@ -43,6 +44,7 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
       'width': width,
       'height': height,
       'time': time,
+      'name': name,
     });
 
     final response = await http.post(
@@ -63,7 +65,8 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
       roomCode: gameCode,
       width: event.width,
       height: event.height,
-      time: 5, // TIME SENT TO SERVER
+      time: 10, // TIME SENT TO SERVER
+      name: event.name,
     );
 
     final statusCode = response.statusCode;
@@ -71,8 +74,12 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
 
     final playerCode = responseBody['player_id'] as String;
 
-    appBloc.add(
-        AddGameInfo(roomCode: gameCode, playerId: playerCode, isHost: true));
+    appBloc.add(AddGameInfo(
+      roomCode: gameCode,
+      playerId: playerCode,
+      playerName: event.name,
+      isHost: true,
+    ));
     emit(Joining(
       gameCode: gameCode,
       playerCode: playerCode,

@@ -72,6 +72,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     final body = json.encode({
       'room_code': appBloc.state.roomCode,
       'player_id': appBloc.state.playerId,
+      'name': appBloc.state.playerName,
     });
 
     final response = await http.post(
