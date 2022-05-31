@@ -1,7 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:boggle_flutter/bloc/bloc.dart';
 import 'package:boggle_flutter/constants/constants.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {
   AppBloc()
@@ -15,6 +15,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<Logout>(_logout);
     on<Register>(_register);
     on<LoginError>(_loginError);
+    on<AddPlayer>(_addPlayer);
+    on<AddGameInfo>(_addGameInfo);
+    on<JoinedGame>(_joinedGame);
   }
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -23,6 +26,25 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     final user = _auth.currentUser;
     final token = await user?.getIdToken() ?? '';
     return token;
+  }
+
+  void _joinedGame(JoinedGame event, Emitter<AppState> emit) {
+    emit(state.copyWith(
+      playerId: event.playerId,
+    ));
+  }
+
+  void _addPlayer(AddPlayer event, Emitter<AppState> emit) {
+    emit(state.copyWith(playerName: event.name, roomCode: event.roomCode));
+  }
+
+  Future _addGameInfo(AddGameInfo event, Emitter<AppState> emit) async {
+    emit(state.copyWith(
+      roomCode: event.roomCode,
+      playerId: event.playerId,
+      playerName: event.playerName,
+      isHost: event.isHost,
+    ));
   }
 
   Future _appOpened(AppOpened event, Emitter<AppState> emit) async {

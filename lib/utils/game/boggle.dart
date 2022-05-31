@@ -37,13 +37,10 @@ class BoggleBoard {
   }
 
   static BoggleBoard fromDynamic(List<dynamic> data) {
-    print('About to process board...');
     final spaces = <List<String>>[];
     for (final row in data) {
-      print('In row...');
       final spaceRow = <String>[];
       for (final letter in row) {
-        print('Processing item');
         spaceRow.add(letter);
       }
       spaces.add(spaceRow);
@@ -155,67 +152,67 @@ class BogglePlayer extends Player {
     required String id,
     String name = '',
     bool isHost = false,
+    this.approvedWords = const <String>[],
+    this.rejectedWords = const <String, WordReason>{},
   }) : super(
           id: id,
           name: name,
           isHost: isHost,
         );
 
-  final List<String> _approvedWords = const [];
-  final Map<String, WordReason> _rejectedWords = const <String, WordReason>{};
+  final List<String> approvedWords;
+  final Map<String, WordReason> rejectedWords;
 
-  void addApproved(String word) {
-    _approvedWords.add(word);
+  BogglePlayer addApproved(String word) {
+    var newList = [word, ...approvedWords];
+    return copyWith(
+      approvedWords: newList,
+    );
   }
 
-  void addRejected({
+  BogglePlayer addRejected({
     required String word,
     required WordReason reason,
   }) {
-    _rejectedWords[word] = reason;
+    var newMap = {word: reason};
+    newMap.addAll(rejectedWords);
+    return copyWith(
+      rejectedWords: newMap,
+    );
   }
 
   List<String> getApprovedWords() {
-    return _approvedWords;
+    return approvedWords;
   }
 
   Map<String, WordReason> getRejectedWords() {
-    return _rejectedWords;
+    return rejectedWords;
   }
 
   String getRejectedString() {
     final rejectedList = <String>[];
 
-    for (final key in _rejectedWords.keys) {
-      rejectedList.add('$key: ${_rejectedWords[key]}');
+    for (final key in rejectedWords.keys) {
+      rejectedList.add('$key: ${getEnumName(rejectedWords[key])}');
     }
 
     return rejectedList.join('\n');
   }
-}
 
-// class BoggleGame extends Game {
-//   const BoggleGame({
-//     required this.boggleBoard,
-//     // required this.timer,
-//     required this.roomCode,
-//     required List<Player> players,
-//   }) : super(players: players);
-//
-//   final BoggleBoard boggleBoard;
-//   // final GameTimer timer;
-//   final String roomCode;
-//
-//   static BoggleGame loadingBoard() {
-//     return const BoggleGame(
-//       boggleBoard: const BoggleBoard(
-//         spaces: <List<String>>[],
-//         tableRows: [],
-//
-//       ),
-//       // timer: GameTimer(msStart: 0),
-//       roomCode: '',
-//       players: [],
-//     );
-//   }
-// }
+  BogglePlayer copyWith({
+    String? id,
+    String? name,
+    bool? isHost,
+    List<String>? approvedWords,
+    Map<String, WordReason>? rejectedWords,
+  }) {
+    final bogglePlayer = BogglePlayer(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      isHost: isHost ?? this.isHost,
+      approvedWords: approvedWords ?? this.approvedWords,
+      rejectedWords: rejectedWords ?? this.rejectedWords,
+    );
+    return bogglePlayer;
+  }
+}
