@@ -49,86 +49,91 @@ class HomeScreenMain extends StatelessWidget {
           }
         },
         child: BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
-          return Row(
-            children: <Widget>[
-              TextButton(
-                child: const Text('Solo'),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (context) => const CreateGame(
-                        playerType: PlayerType.solo,
-                      ),
-                    ),
-                  );
-                },
-              ),
-              TextButton(
-                child: const Text('Host'),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (context) => const CreateGame(
-                        playerType: PlayerType.host,
-                      ),
-                    ),
-                  );
-                },
-              ),
-              TextButton(
-                child: const Text('Join'),
-                onPressed: () {
-                  if (currentOverlay?.mounted ?? false) {
-                    currentOverlay?.remove();
-                  }
-                  currentOverlay = overlayPopup(
-                    screenWidth: screenSize.width,
-                    child: Column(
-                      children: <Widget>[
-                        NameInput(onChanged: (value) {
-                          name = value;
-                        }),
-                        TextField(
-                          onChanged: (value) {
-                            gameCode = value;
-                          },
+          return Column(
+            children: [
+              Text('Version 1.0.0'),
+              Row(
+                children: <Widget>[
+                  TextButton(
+                    child: const Text('Solo'),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (context) => const CreateGame(
+                            playerType: PlayerType.solo,
+                          ),
                         ),
-                        Row(
-                          children: [
-                            TextButton(
-                                onPressed: () {
-                                  currentOverlay?.remove();
-                                },
-                                child: const Text('Cancel')),
-                            TextButton(
-                              child: const Text('join'),
-                              onPressed: () {
-                                context.read<AppBloc>().add(AddPlayer(
-                                      roomCode: gameCode,
-                                      name: name,
-                                    ));
-                                //   context
-                                //       .read<HomeBloc>()
-                                //       .add(JoinGame(gameCode: gameCode));
-                                currentOverlay?.remove();
-
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute<void>(
-                                    builder: (context) => BoardScreen(),
-                                  ),
-                                );
+                      );
+                    },
+                  ),
+                  TextButton(
+                    child: const Text('Host'),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (context) => const CreateGame(
+                            playerType: PlayerType.host,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  TextButton(
+                    child: const Text('Join'),
+                    onPressed: () {
+                      if (currentOverlay?.mounted ?? false) {
+                        currentOverlay?.remove();
+                      }
+                      currentOverlay = overlayPopup(
+                        screenWidth: screenSize.width,
+                        child: Column(
+                          children: <Widget>[
+                            NameInput(onChanged: (value) {
+                              name = value;
+                            }),
+                            TextField(
+                              onChanged: (value) {
+                                gameCode = value;
                               },
                             ),
+                            Row(
+                              children: [
+                                TextButton(
+                                    onPressed: () {
+                                      currentOverlay?.remove();
+                                    },
+                                    child: const Text('Cancel')),
+                                TextButton(
+                                  child: const Text('join'),
+                                  onPressed: () {
+                                    context.read<AppBloc>().add(AddPlayer(
+                                          roomCode: gameCode,
+                                          name: name,
+                                        ));
+                                    //   context
+                                    //       .read<HomeBloc>()
+                                    //       .add(JoinGame(gameCode: gameCode));
+                                    currentOverlay?.remove();
+
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute<void>(
+                                        builder: (context) => BoardScreen(),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            )
                           ],
-                        )
-                      ],
-                    ),
-                  );
-                  Overlay.of(context)?.insert(currentOverlay!);
-                },
+                        ),
+                      );
+                      Overlay.of(context)?.insert(currentOverlay!);
+                    },
+                  ),
+                ],
               ),
             ],
           );
