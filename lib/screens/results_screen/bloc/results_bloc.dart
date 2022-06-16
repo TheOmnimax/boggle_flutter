@@ -25,5 +25,6 @@ class ResultsBloc extends Bloc<ResultsEvent, ResultsState> {
     );
     final boggleResults = BoggleResults.fromJson(responseBody);
     emit(MainState(boggleResults: boggleResults));
+    return null;
   }
 }

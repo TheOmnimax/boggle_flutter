@@ -1,11 +1,12 @@
 import 'dart:async';
 
-import 'package:boggle_flutter/screens/board_screen/bloc/board_bloc/bloc.dart';
+import 'package:boggle_flutter/screens/board_screen/bloc/board_bloc/board_bloc.dart';
 import 'package:boggle_flutter/utils/game/game.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'timer_event.dart';
-import 'timer_state.dart';
+part 'timer_event.dart';
+part 'timer_state.dart';
 
 class TimerBloc extends Bloc<TimerEvent, TimerState> {
   TimerBloc({

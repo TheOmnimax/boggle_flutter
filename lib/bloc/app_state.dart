@@ -1,5 +1,4 @@
-import 'package:boggle_flutter/constants/constants.dart';
-import 'package:equatable/equatable.dart';
+part of 'package:boggle_flutter/bloc/app_bloc.dart';
 
 class AppState extends Equatable {
   const AppState({
