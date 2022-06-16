@@ -1,4 +1,4 @@
-import 'package:boggle_flutter/constants/constants.dart';
+part of 'package:boggle_flutter/bloc/app_bloc.dart';
 
 abstract class AppEvent {
   const AppEvent();
@@ -32,8 +32,8 @@ class AddGameInfo extends AppEvent {
   final bool isHost;
 }
 
-class JoinedGame extends AppEvent {
-  const JoinedGame({
+class AddPlayerId extends AppEvent {
+  const AddPlayerId({
     required this.playerId,
   });
   final String playerId;

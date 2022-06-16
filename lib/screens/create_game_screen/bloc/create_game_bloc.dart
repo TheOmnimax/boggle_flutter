@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:boggle_flutter/bloc/bloc.dart';
+import 'package:boggle_flutter/bloc/app_bloc.dart';
 import 'package:boggle_flutter/constants/constants.dart';
 import 'package:boggle_flutter/utils/http.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -59,7 +59,7 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
       roomCode: gameCode,
       width: event.width,
       height: event.height,
-      time: 10, // TIME SENT TO SERVER
+      time: 20, // TIME SENT TO SERVER
       name: event.name,
     );
 

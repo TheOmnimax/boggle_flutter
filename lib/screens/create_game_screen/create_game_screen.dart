@@ -9,8 +9,6 @@ import 'package:boggle_flutter/shared_widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../bloc/app_event.dart';
-
 class CreateGame extends StatelessWidget {
   const CreateGame({
     Key? key,

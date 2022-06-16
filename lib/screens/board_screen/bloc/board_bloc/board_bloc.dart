@@ -1,15 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:boggle_flutter/bloc/bloc.dart';
+import 'package:boggle_flutter/bloc/app_bloc.dart';
 import 'package:boggle_flutter/constants/constants.dart';
 import 'package:boggle_flutter/utils/game/boggle.dart';
 import 'package:boggle_flutter/utils/http.dart';
 import 'package:boggle_flutter/utils/timing.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 
-import 'bloc.dart';
+part 'board_event.dart';
+part 'board_state.dart';
 
 class BoardBloc extends Bloc<BoardEvent, BoardState> {
   BoardBloc({
@@ -72,7 +74,6 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     final body = json.encode({
       'room_code': appBloc.state.roomCode,
       'player_id': appBloc.state.playerId,
-      'name': appBloc.state.playerName,
     });
 
     final response = await http.post(
@@ -89,7 +90,6 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     final playerId = responseBody['player_id'] as String;
     // final boardRaw = responseBody['board'] as List<dynamic>;
 
-    appBloc.add(JoinedGame(playerId: playerId));
     final boggleBoard = BoggleBoard.createHiddenBoard(
       width: width,
       height: height,
