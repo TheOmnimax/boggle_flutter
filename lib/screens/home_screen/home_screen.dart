@@ -3,6 +3,7 @@ import 'package:boggle_flutter/constants/constants.dart';
 import 'package:boggle_flutter/screens/board_screen/board_screen.dart';
 import 'package:boggle_flutter/screens/create_game_screen/create_game_screen.dart';
 import 'package:boggle_flutter/screens/home_screen/bloc/bloc.dart';
+import 'package:boggle_flutter/shared_widgets/buttons.dart';
 import 'package:boggle_flutter/shared_widgets/general.dart';
 import 'package:boggle_flutter/shared_widgets/input.dart';
 import 'package:boggle_flutter/shared_widgets/show_popup.dart';
@@ -54,15 +55,7 @@ class HomeScreenMain extends StatelessWidget {
               title: 'Error joining game',
               desc: state.errorMessage,
               buttons: [
-                DialogButton(
-                  child: const Text(
-                    'Close',
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                )
+                PopupCloseButton(context: context),
               ],
               style: popupStyle,
             );
@@ -70,6 +63,7 @@ class HomeScreenMain extends StatelessWidget {
           }
         },
         child: BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
+          final nameTc = TextEditingController();
           return Column(
             children: [
               Text('Version 1.0.0'),
@@ -111,9 +105,12 @@ class HomeScreenMain extends StatelessWidget {
                         screenWidth: screenSize.width,
                         child: Column(
                           children: <Widget>[
-                            NameInput(onChanged: (value) {
-                              name = value;
-                            }),
+                            NameInput(
+                              onChanged: (value) {
+                                name = value;
+                              },
+                              tc: nameTc,
+                            ),
                             TextField(
                               onChanged: (value) {
                                 gameCode = value;

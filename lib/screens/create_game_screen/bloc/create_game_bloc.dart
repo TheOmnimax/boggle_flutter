@@ -13,13 +13,21 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
     required this.appBloc,
   }) : super(const MainState()) {
     on<Create>(_create);
+    on<SetName>(_setName);
+    on<SetTime>(_setTime);
+    on<NewAlert>(_newAlert);
   }
 
   final AppBloc appBloc;
 
   Future<String> _createRoom() async {
     print('Creating room...');
-    final responseBody = await httpPost(uri: baseUrl + 'create-room', body: {});
+
+    final response = await Http.post(
+      uri: baseUrl + 'create-room',
+      body: {},
+    );
+    final responseBody = Http.jsonDecode(response.body);
     final gameCode = responseBody['room_code'] as String;
     return gameCode;
   }
@@ -59,7 +67,8 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
       roomCode: gameCode,
       width: event.width,
       height: event.height,
-      time: 20, // TIME SENT TO SERVER
+      time: state.gameTime ??
+          90, // TIME SENT TO SERVER. This event should never actually be called when the gameTime is null
       name: event.name,
     );
 
@@ -78,5 +87,20 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
       gameCode: gameCode,
       playerCode: playerCode,
     ));
+  }
+
+  void _setName(SetName event, Emitter<CreateGameState> emit) {
+    print('Setting name to ${event.playerName}');
+    emit(state.copyWith(playerName: event.playerName));
+  }
+
+  void _setTime(SetTime event, Emitter<CreateGameState> emit) {
+    emit(state.copyWith(gameTime: event.gameTime ?? 0));
+  }
+
+  void _newAlert(NewAlert event, Emitter<CreateGameState> emit) {
+    state.alert?.dismiss();
+    emit(state.copyWith(alert: event.alert));
+    state.alert?.show();
   }
 }
