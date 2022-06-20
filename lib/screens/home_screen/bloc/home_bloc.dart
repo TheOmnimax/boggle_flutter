@@ -24,6 +24,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Future _hostGame(HostGame event, Emitter<HomeState> emit) async {}
   Future _addPlayer(JoinGame event, Emitter<HomeState> emit) async {
     final uri = Uri.parse(baseUrl + 'add-player');
+    print('Adding player');
     final response = await http.post(
       uri,
       headers: sendHeaders,

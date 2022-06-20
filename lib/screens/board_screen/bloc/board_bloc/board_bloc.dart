@@ -34,12 +34,13 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
 
   Future checkStarted() async {
     if (gameStatus == GameStatus.pre) {
-      final responseBody = await httpPost(
+      final response = await Http.post(
         uri: baseUrl + 'is-started',
         body: {
           'room_code': appBloc.state.roomCode,
         },
       );
+      final responseBody = Http.jsonDecode(response.body);
       final gameRunning = responseBody['running'] as bool;
       if (gameRunning) {
         if (gameStatus == GameStatus.pre) {
@@ -47,14 +48,12 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
         }
       } else {}
     } else {
-      final responseBody = await httpPost(
-        uri: baseUrl + 'check-in',
-        body: {
-          'room_code': appBloc.state.roomCode,
-          'player_id': appBloc.state.playerId,
-          'timestamp': getEpochTime(),
-        },
-      );
+      final response = await Http.post(uri: baseUrl + 'check-in', body: {
+        'room_code': appBloc.state.roomCode,
+        'player_id': appBloc.state.playerId,
+        'timestamp': getEpochTime(),
+      });
+      final responseBody = Http.jsonDecode(response.body);
       final gameEnded = responseBody['ended'] as bool;
       if (gameEnded) {
         add(const ResultsReady());
@@ -87,7 +86,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     final height = responseBody['height'] as int;
     final width = responseBody['width'] as int;
     final gameTime = responseBody['time'] as int;
-    final playerId = responseBody['player_id'] as String;
+    final isHost = responseBody['is_host'] as bool;
     // final boardRaw = responseBody['board'] as List<dynamic>;
 
     final boggleBoard = BoggleBoard.createHiddenBoard(
@@ -97,8 +96,8 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
 
     // TODO: Update with host info
     final bogglePlayer = BogglePlayer(
-      id: playerId,
-      isHost: true,
+      id: appBloc.state.playerId,
+      isHost: isHost,
     );
 
     // TODO: Update player and time remaining with values from server
@@ -156,7 +155,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
       ));
 
       // player-start
-      final playerStartResponse = httpPost(
+      final playerStartResponse = Http.post(
         uri: baseUrl + 'player-start',
         body: {
           'room_code': appBloc.state.roomCode,

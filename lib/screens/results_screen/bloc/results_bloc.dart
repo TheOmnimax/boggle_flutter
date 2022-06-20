@@ -17,12 +17,13 @@ class ResultsBloc extends Bloc<ResultsEvent, ResultsState> {
   final AppBloc appBloc;
 
   Future _loading(Loading event, Emitter<ResultsState> emit) async {
-    final responseBody = await httpPost(
+    final response = await Http.post(
       uri: baseUrl + 'get-results',
       body: {
         'room_code': appBloc.state.roomCode,
       },
     );
+    final responseBody = Http.jsonDecode(response.body);
     final boggleResults = BoggleResults.fromJson(responseBody);
     emit(MainState(boggleResults: boggleResults));
     return null;
