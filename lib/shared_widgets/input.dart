@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 class NameInput extends StatelessWidget {
   const NameInput({
     required this.onChanged,
+    required this.tc,
     Key? key,
   }) : super(key: key);
 
   final Function(String) onChanged;
+  final TextEditingController tc;
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +17,9 @@ class NameInput extends StatelessWidget {
       children: [
         const Text('Name: '),
         SizedBox(
-          child: TextField(
+          child: TextFormField(
             onChanged: onChanged,
+            controller: tc,
           ),
           width: 200,
         ),

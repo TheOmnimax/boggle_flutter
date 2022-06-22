@@ -1,4 +1,3 @@
-import 'package:boggle_flutter/screens/home_screen/bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class HomeEvent extends Equatable {
@@ -22,10 +21,20 @@ class HostGame extends HomeEvent {
 class JoinGame extends HomeEvent {
   const JoinGame({
     required this.gameCode,
+    required this.name,
   });
 
   final String gameCode;
+  final String name;
 
   @override
-  List<Object?> get props => [gameCode];
+  List<Object?> get props => [gameCode, name];
+}
+
+class CloseError extends HomeEvent {
+  const CloseError();
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
 }

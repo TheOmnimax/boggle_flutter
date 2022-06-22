@@ -1,7 +1,10 @@
-import 'package:boggle_flutter/bloc/bloc.dart';
 import 'package:boggle_flutter/constants/constants.dart';
+import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+part 'app_event.dart';
+part 'app_state.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {
   AppBloc()
@@ -17,7 +20,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<LoginError>(_loginError);
     on<AddPlayer>(_addPlayer);
     on<AddGameInfo>(_addGameInfo);
-    on<JoinedGame>(_joinedGame);
+    on<AddPlayerId>(_joinedGame);
   }
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -28,7 +31,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     return token;
   }
 
-  void _joinedGame(JoinedGame event, Emitter<AppState> emit) {
+  void _joinedGame(AddPlayerId event, Emitter<AppState> emit) {
     emit(state.copyWith(
       playerId: event.playerId,
     ));

@@ -1,7 +1,5 @@
-import 'package:boggle_flutter/bloc/bloc.dart';
+import 'package:boggle_flutter/bloc/app_bloc.dart';
 import 'package:boggle_flutter/constants/constants.dart';
-import 'package:boggle_flutter/screens/board_screen/bloc/board_bloc/bloc.dart';
-import 'package:boggle_flutter/screens/board_screen/bloc/timer_bloc/bloc.dart';
 import 'package:boggle_flutter/screens/results_screen/results_screen.dart';
 import 'package:boggle_flutter/shared_widgets/general.dart';
 import 'package:boggle_flutter/shared_widgets/loading.dart';
@@ -10,33 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
-class TimerComponent extends StatelessWidget {
-  const TimerComponent({
-    Key? key,
-    // required this.boardBloc,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    // final BoardBloc boardBlocRead = context.read<BoardBloc>();
-
-    final boardBlocWatch = context.watch<BoardBloc>();
-    return BlocProvider(
-      create: (context) => TimerBloc(
-        boardBloc: boardBlocWatch,
-        startTime: boardBlocWatch.state.timeRemaining,
-      )..add(const LoadTimer()),
-      child: BlocBuilder<TimerBloc, TimerState>(
-        builder: (context, state) {
-          if ((!state.running) && (boardBlocWatch.state is Playing)) {
-            context.read<TimerBloc>().add(const TimerStart());
-          } else {}
-          return Text(state.time.toString());
-        },
-      ),
-    );
-  }
-}
+import 'bloc/board_bloc/board_bloc.dart';
+import 'board_components/components.dart';
 
 class BoardScreen extends StatelessWidget {
   const BoardScreen({
@@ -50,40 +23,6 @@ class BoardScreen extends StatelessWidget {
         appBloc: context.read<AppBloc>(),
       )..add(const LoadGame()),
       child: const BoardScreenMain(),
-    );
-  }
-}
-
-class WordEntry extends StatelessWidget {
-  const WordEntry({
-    required this.onChanged,
-    required this.text,
-    Key? key,
-  }) : super(key: key);
-
-  final Function(String) onChanged;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    final tc = TextEditingController();
-    tc.text = text;
-
-    tc
-      ..text = text
-      ..selection =
-          TextSelection(baseOffset: text.length, extentOffset: text.length);
-    return Column(
-      children: [
-        const Text('Enter word:'),
-        SizedBox(
-          width: 50,
-          child: TextFormField(
-            controller: tc,
-            onChanged: onChanged,
-          ),
-        ),
-      ],
     );
   }
 }
@@ -168,7 +107,8 @@ class _BoardScreenMainState extends State<BoardScreenMain> {
                       Column(
                         children: [
                           const Text('Room code:'),
-                          Text(context.read<AppBloc>().state.roomCode),
+                          SelectableText(
+                              context.read<AppBloc>().state.roomCode),
                           Text(
                               'Player code: ${context.read<AppBloc>().state.playerId}')
                         ],
@@ -236,13 +176,20 @@ class _BoardScreenMainState extends State<BoardScreenMain> {
                             ],
                           );
                         } else if (state is Ready) {
-                          return TextButton(
-                            onPressed: () {
-                              context.read<BoardBloc>().add(const StartGame());
-                            },
-                            child:
-                                const Text('Start'), // TODO: Hide for non-host
-                          );
+                          if (state.player.isHost) {
+                            return TextButton(
+                              onPressed: () {
+                                context
+                                    .read<BoardBloc>()
+                                    .add(const StartGame());
+                              },
+                              child: const Text(
+                                  'Start'), // TODO: Hide for non-host
+                            );
+                          } else {
+                            return const Text(
+                                'Please wait for the host to start the game');
+                          }
                         } else if (state is Complete) {
                           return const Text('Done!');
                         } else {
