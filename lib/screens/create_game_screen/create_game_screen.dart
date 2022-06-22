@@ -7,9 +7,9 @@ import 'package:boggle_flutter/shared_widgets/general.dart';
 import 'package:boggle_flutter/shared_widgets/input.dart';
 import 'package:boggle_flutter/shared_widgets/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../bloc/app_event.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class CreateGame extends StatelessWidget {
   const CreateGame({
@@ -44,10 +44,6 @@ class CreateGameMain extends StatelessWidget {
       screenWidth: mqData.size.width,
       top: topHeight,
     );
-    // TODO: Update to ensure only numbers can be entered
-    final tc = TextEditingController();
-    int time = 90;
-    String name = '';
     return GameArea(
       child: BlocListener<CreateGameBloc, CreateGameState>(
         listener: (context, state) {
@@ -63,12 +59,30 @@ class CreateGameMain extends StatelessWidget {
         },
         child: BlocBuilder<CreateGameBloc, CreateGameState>(
           builder: (context, state) {
+            print('Name is currently ${state.playerName}');
+            print('Game time is ${state.gameTime}');
+            final timeTc = TextEditingController();
+            if ((state.gameTime == 0) || (state.gameTime == null)) {
+              timeTc.text = '';
+            } else {
+              timeTc.text = state.gameTime.toString();
+            }
+            timeTc.selection = TextSelection(
+                baseOffset: timeTc.text.length,
+                extentOffset: timeTc.text.length);
+            final nameTc = TextEditingController()..text = state.playerName;
+            nameTc.selection = TextSelection(
+                baseOffset: nameTc.text.length,
+                extentOffset: nameTc.text.length);
             return Column(
               children: [
                 NameInput(
                   onChanged: (value) {
-                    name = value;
+                    context
+                        .read<CreateGameBloc>()
+                        .add(SetName(playerName: value));
                   },
+                  tc: nameTc,
                 ),
                 Row(
                   children: [
@@ -76,10 +90,16 @@ class CreateGameMain extends StatelessWidget {
                       children: [
                         const Text('Time (s)'),
                         SizedBox(
-                          child: TextField(
+                          child: TextFormField(
                             onChanged: (value) {
-                              time = num.tryParse(value)?.toInt() ?? 90;
+                              context.read<CreateGameBloc>().add(SetTime(
+                                  gameTime: num.tryParse(value)?.toInt()));
                             },
+                            controller: timeTc,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
+                            keyboardType: TextInputType.number,
                           ),
                           width: 200,
                         ),
@@ -90,21 +110,58 @@ class CreateGameMain extends StatelessWidget {
                         const Text('Game board'),
                         StartButton(
                             onPressed: () {
-                              Overlay.of(context)?.insert(loadingO);
+                              print('Game time is ${state.gameTime}');
+                              if (state.playerName == '') {
+                                context.read<CreateGameBloc>().add(
+                                      NewAlert(
+                                        alert: Alert(
+                                          context: context,
+                                          title: 'No name given!',
+                                          desc: 'Please provide a name',
+                                          buttons: [
+                                            PopupCloseButton(
+                                              context: context,
+                                            ),
+                                          ],
+                                          style: popupStyle,
+                                        ),
+                                      ),
+                                    );
+                              } else if ((state.gameTime == 0) ||
+                                  (state.gameTime == null)) {
+                                context.read<CreateGameBloc>().add(
+                                      NewAlert(
+                                        alert: Alert(
+                                          context: context,
+                                          title: 'No time given!',
+                                          desc: 'Please provide a time',
+                                          buttons: [
+                                            PopupCloseButton(
+                                              context: context,
+                                            ),
+                                          ],
+                                          style: popupStyle,
+                                        ),
+                                      ),
+                                    );
+                              } else {
+                                Overlay.of(context)?.insert(loadingO);
 
-                              context.read<AppBloc>().add(AddPlayer(
-                                    roomCode:
-                                        '', // TODO: Make so don't have to provide room code
-                                    name: name,
-                                  ));
-                              context.read<CreateGameBloc>().add(
-                                    Create(
-                                      time: 90,
-                                      width: 4,
-                                      height: 4,
-                                      name: name,
-                                    ),
-                                  );
+                                context.read<AppBloc>().add(AddPlayer(
+                                      roomCode:
+                                          '', // TODO: Make so don't have to provide room code
+                                      name: state.playerName,
+                                    ));
+                                context.read<CreateGameBloc>().add(
+                                      Create(
+                                        time: state.gameTime ??
+                                            90, // This should never actually be 90
+                                        width: 4,
+                                        height: 4,
+                                        name: state.playerName,
+                                      ),
+                                    );
+                              }
                             },
                             text: '4x4'),
                       ],

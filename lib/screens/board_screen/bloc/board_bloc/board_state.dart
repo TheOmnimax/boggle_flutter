@@ -1,5 +1,4 @@
-import 'package:boggle_flutter/utils/game/boggle.dart';
-import 'package:equatable/equatable.dart';
+part of 'board_bloc.dart';
 
 abstract class BoardState extends Equatable {
   const BoardState({

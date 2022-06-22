@@ -19,6 +19,7 @@ class BogglePlayerResults {
       scoreList[word] = score;
     }
 
+    print(data);
     return BogglePlayerResults(
       name: data['name'] as String,
       scoreList: scoreList,
