@@ -107,7 +107,8 @@ class _BoardScreenMainState extends State<BoardScreenMain> {
                       Column(
                         children: [
                           const Text('Room code:'),
-                          Text(context.read<AppBloc>().state.roomCode),
+                          SelectableText(
+                              context.read<AppBloc>().state.roomCode),
                           Text(
                               'Player code: ${context.read<AppBloc>().state.playerId}')
                         ],
@@ -175,13 +176,20 @@ class _BoardScreenMainState extends State<BoardScreenMain> {
                             ],
                           );
                         } else if (state is Ready) {
-                          return TextButton(
-                            onPressed: () {
-                              context.read<BoardBloc>().add(const StartGame());
-                            },
-                            child:
-                                const Text('Start'), // TODO: Hide for non-host
-                          );
+                          if (state.player.isHost) {
+                            return TextButton(
+                              onPressed: () {
+                                context
+                                    .read<BoardBloc>()
+                                    .add(const StartGame());
+                              },
+                              child: const Text(
+                                  'Start'), // TODO: Hide for non-host
+                            );
+                          } else {
+                            return const Text(
+                                'Please wait for the host to start the game');
+                          }
                         } else if (state is Complete) {
                           return const Text('Done!');
                         } else {

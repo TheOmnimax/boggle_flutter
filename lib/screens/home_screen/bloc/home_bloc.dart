@@ -1,11 +1,9 @@
-import 'dart:convert';
-
 import 'package:boggle_flutter/bloc/app_bloc.dart';
 import 'package:boggle_flutter/constants/constants.dart';
 import 'package:boggle_flutter/utils/error_handling/server_error_handling.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart' as http;
 
+import '../../../utils/http.dart';
 import 'bloc.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
@@ -23,11 +21,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Future _soloGame(SoloGame event, Emitter<HomeState> emit) async {}
   Future _hostGame(HostGame event, Emitter<HomeState> emit) async {}
   Future _addPlayer(JoinGame event, Emitter<HomeState> emit) async {
-    final uri = Uri.parse(baseUrl + 'add-player');
     print('Adding player');
-    final response = await http.post(
-      uri,
-      headers: sendHeaders,
+    final response = await Http.post(
+      uri: baseUrl + 'add-player',
       body: {
         'room_code': event.gameCode,
         'name': event.name,
@@ -41,9 +37,16 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         errorMessage: errorMessage,
       ));
     } else {
-      final responseBody = json.decode(response.body) as Map<String, dynamic>;
+      final responseBody = Http.jsonDecode(response.body);
+      print(responseBody);
       final playerId = responseBody['player_id'];
-      appBloc.add(AddPlayerId(playerId: playerId));
+      print('Player ID is $playerId');
+      print('Room code: ${event.gameCode}');
+      appBloc.add(AddGameInfo(
+          roomCode: event.gameCode,
+          playerId: playerId,
+          playerName: event.name,
+          isHost: false));
       emit(Joining());
     }
   }

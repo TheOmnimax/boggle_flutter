@@ -68,7 +68,7 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
       width: event.width,
       height: event.height,
       time: state.gameTime ??
-          90, // TIME SENT TO SERVER. This event should never actually be called when the gameTime is null
+          90, // TIME SENT TO SERVER. The game time should never actually be null.
       name: event.name,
     );
 

@@ -48,6 +48,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
         }
       } else {}
     } else {
+      print('Player ID: ${appBloc.state.playerId}');
       final response = await Http.post(uri: baseUrl + 'check-in', body: {
         'room_code': appBloc.state.roomCode,
         'player_id': appBloc.state.playerId,
@@ -68,18 +69,11 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
   }
 
   Future _loadGame(LoadGame event, Emitter<BoardState> emit) async {
-    final uri = Uri.parse(baseUrl + 'join-game');
-
-    final body = json.encode({
+    print('Loading game from code ${appBloc.state.roomCode}');
+    final response = await Http.post(uri: baseUrl + 'join-game', body: {
       'room_code': appBloc.state.roomCode,
       'player_id': appBloc.state.playerId,
     });
-
-    final response = await http.post(
-      uri,
-      headers: sendHeaders,
-      body: body,
-    );
 
     final statusCode = response.statusCode;
     final responseBody = json.decode(response.body) as Map<String, dynamic>;
