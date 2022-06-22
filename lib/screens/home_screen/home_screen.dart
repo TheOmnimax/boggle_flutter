@@ -126,22 +126,15 @@ class HomeScreenMain extends StatelessWidget {
                                 TextButton(
                                   child: const Text('join'),
                                   onPressed: () {
-                                    context.read<AppBloc>().add(AddPlayer(
-                                          roomCode: gameCode,
+                                    // context.read<AppBloc>().add(AddPlayer(
+                                    //       roomCode: gameCode,
+                                    //       name: name,
+                                    //     ));
+                                    context.read<HomeBloc>().add(JoinGame(
                                           name: name,
+                                          gameCode: gameCode,
                                         ));
-                                    //   context
-                                    //       .read<HomeBloc>()
-                                    //       .add(JoinGame(gameCode: gameCode));
                                     currentOverlay?.remove();
-
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute<void>(
-                                        // TODO: Update joining to this page for better error handling
-                                        builder: (context) => BoardScreen(),
-                                      ),
-                                    );
                                   },
                                 ),
                               ],

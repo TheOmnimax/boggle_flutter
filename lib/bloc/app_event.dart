@@ -32,6 +32,7 @@ class AddGameInfo extends AppEvent {
   final bool isHost;
 }
 
+// Currently not used
 class AddPlayerId extends AppEvent {
   const AddPlayerId({
     required this.playerId,

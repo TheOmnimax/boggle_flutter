@@ -30,7 +30,7 @@ class MainState extends CreateGameState {
   const MainState({
     Alert? alert,
     String playerName = '',
-    int? gameTime,
+    int? gameTime = 90,
   }) : super(
           alert: alert,
           playerName: playerName,
