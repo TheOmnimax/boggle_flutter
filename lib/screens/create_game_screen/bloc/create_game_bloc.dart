@@ -3,19 +3,19 @@ import 'dart:convert';
 import 'package:boggle_flutter/bloc/app_bloc.dart';
 import 'package:boggle_flutter/constants/constants.dart';
 import 'package:boggle_flutter/utils/http.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
+import 'package:rflutter_alert/rflutter_alert.dart';
 
-import 'bloc.dart';
+part 'create_game_event.dart';
+part 'create_game_state.dart';
 
 class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
   CreateGameBloc({
     required this.appBloc,
   }) : super(const MainState()) {
     on<Create>(_create);
-    on<SetName>(_setName);
-    on<SetTime>(_setTime);
-    on<NewAlert>(_newAlert);
   }
 
   final AppBloc appBloc;
@@ -61,13 +61,13 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
   }
 
   Future _create(Create event, Emitter<CreateGameState> emit) async {
+    emit(LoadingGame());
     final gameCode = await _createRoom();
-    // TODO: Update with more customized time
     final response = await _createGame(
       roomCode: gameCode,
       width: event.width,
       height: event.height,
-      time: state.gameTime ??
+      time: event.time ??
           90, // TIME SENT TO SERVER. The game time should never actually be null.
       name: event.name,
     );
@@ -87,20 +87,5 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
       gameCode: gameCode,
       playerCode: playerCode,
     ));
-  }
-
-  void _setName(SetName event, Emitter<CreateGameState> emit) {
-    print('Setting name to ${event.playerName}');
-    emit(state.copyWith(playerName: event.playerName));
-  }
-
-  void _setTime(SetTime event, Emitter<CreateGameState> emit) {
-    emit(state.copyWith(gameTime: event.gameTime ?? 0));
-  }
-
-  void _newAlert(NewAlert event, Emitter<CreateGameState> emit) {
-    state.alert?.dismiss();
-    emit(state.copyWith(alert: event.alert));
-    state.alert?.show();
   }
 }

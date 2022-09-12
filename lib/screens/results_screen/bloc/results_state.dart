@@ -1,5 +1,4 @@
-import 'package:boggle_flutter/utils/game/boggle_results.dart';
-import 'package:equatable/equatable.dart';
+part of 'results_bloc.dart';
 
 abstract class ResultsState extends Equatable {
   const ResultsState();

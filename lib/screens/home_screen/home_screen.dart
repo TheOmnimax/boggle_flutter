@@ -2,14 +2,18 @@ import 'package:boggle_flutter/bloc/app_bloc.dart';
 import 'package:boggle_flutter/constants/constants.dart';
 import 'package:boggle_flutter/screens/board_screen/board_screen.dart';
 import 'package:boggle_flutter/screens/create_game_screen/create_game_screen.dart';
-import 'package:boggle_flutter/screens/home_screen/bloc/bloc.dart';
+import 'package:boggle_flutter/screens/home_screen/bloc/home_bloc.dart';
+import 'package:boggle_flutter/screens/home_screen/popup_bloc/popup_bloc.dart';
 import 'package:boggle_flutter/shared_widgets/buttons.dart';
 import 'package:boggle_flutter/shared_widgets/general.dart';
 import 'package:boggle_flutter/shared_widgets/input.dart';
-import 'package:boggle_flutter/shared_widgets/show_popup.dart';
+import 'package:boggle_flutter/shared_widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+
+part 'package:boggle_flutter/screens/home_screen/mode_widgets/home_host.dart';
+part 'package:boggle_flutter/screens/home_screen/mode_widgets/home_join.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -63,10 +67,9 @@ class HomeScreenMain extends StatelessWidget {
           }
         },
         child: BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
-          final nameTc = TextEditingController();
           return Column(
             children: [
-              Text('Version 1.0.0'),
+              Text('Version 1.0.2'),
               Row(
                 children: <Widget>[
                   // TextButton(
@@ -95,56 +98,7 @@ class HomeScreenMain extends StatelessWidget {
                       );
                     },
                   ),
-                  TextButton(
-                    child: const Text('Join'),
-                    onPressed: () {
-                      if (currentOverlay?.mounted ?? false) {
-                        currentOverlay?.remove();
-                      }
-                      currentOverlay = overlayPopup(
-                        screenWidth: screenSize.width,
-                        child: Column(
-                          children: <Widget>[
-                            NameInput(
-                              onChanged: (value) {
-                                name = value;
-                              },
-                              tc: nameTc,
-                            ),
-                            TextField(
-                              onChanged: (value) {
-                                gameCode = value;
-                              },
-                            ),
-                            Row(
-                              children: [
-                                TextButton(
-                                    onPressed: () {
-                                      currentOverlay?.remove();
-                                    },
-                                    child: const Text('Cancel')),
-                                TextButton(
-                                  child: const Text('join'),
-                                  onPressed: () {
-                                    // context.read<AppBloc>().add(AddPlayer(
-                                    //       roomCode: gameCode,
-                                    //       name: name,
-                                    //     ));
-                                    context.read<HomeBloc>().add(JoinGame(
-                                          name: name,
-                                          gameCode: gameCode,
-                                        ));
-                                    currentOverlay?.remove();
-                                  },
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      );
-                      Overlay.of(context)?.insert(currentOverlay!);
-                    },
-                  ),
+                  JoinWidget(),
                 ],
               ),
             ],

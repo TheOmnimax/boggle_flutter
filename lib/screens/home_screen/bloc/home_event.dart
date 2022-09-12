@@ -1,21 +1,33 @@
-import 'package:equatable/equatable.dart';
+part of 'home_bloc.dart';
 
 abstract class HomeEvent extends Equatable {
   const HomeEvent();
+
+  @override
+  List<Object?> get props => [];
 }
 
 class SoloGame extends HomeEvent {
   const SoloGame();
-
-  @override
-  List<Object?> get props => [];
 }
 
 class HostGame extends HomeEvent {
   const HostGame();
+}
+
+class ShowPopup extends HomeEvent {
+  const ShowPopup({
+    required this.alert,
+  });
+
+  final Alert alert;
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [alert];
+}
+
+class DismissPopup extends HomeEvent {
+  const DismissPopup();
 }
 
 class JoinGame extends HomeEvent {
@@ -33,8 +45,4 @@ class JoinGame extends HomeEvent {
 
 class CloseError extends HomeEvent {
   const CloseError();
-
-  @override
-  // TODO: implement props
-  List<Object?> get props => [];
 }

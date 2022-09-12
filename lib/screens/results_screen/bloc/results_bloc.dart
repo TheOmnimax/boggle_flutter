@@ -2,10 +2,11 @@ import 'package:boggle_flutter/bloc/app_bloc.dart';
 import 'package:boggle_flutter/constants/constants.dart';
 import 'package:boggle_flutter/utils/game/boggle_results.dart';
 import 'package:boggle_flutter/utils/http.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'results_event.dart';
-import 'results_state.dart';
+part 'results_event.dart';
+part 'results_state.dart';
 
 class ResultsBloc extends Bloc<ResultsEvent, ResultsState> {
   ResultsBloc({

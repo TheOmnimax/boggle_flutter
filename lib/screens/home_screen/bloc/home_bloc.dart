@@ -1,10 +1,13 @@
 import 'package:boggle_flutter/bloc/app_bloc.dart';
 import 'package:boggle_flutter/constants/constants.dart';
 import 'package:boggle_flutter/utils/error_handling/server_error_handling.dart';
+import 'package:boggle_flutter/utils/http.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
-import '../../../utils/http.dart';
-import 'bloc.dart';
+part 'home_event.dart';
+part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc({
@@ -14,12 +17,32 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HostGame>(_hostGame);
     on<JoinGame>(_addPlayer);
     on<CloseError>(_closeError);
+    on<ShowPopup>(_showPopup);
+    on<DismissPopup>(_dismissPopup);
   }
 
   final AppBloc appBloc;
 
   Future _soloGame(SoloGame event, Emitter<HomeState> emit) async {}
   Future _hostGame(HostGame event, Emitter<HomeState> emit) async {}
+
+  void _showPopup(ShowPopup event, Emitter<HomeState> emit) {
+    // state.alert?.dismiss(); // Enabling this causes issues when re-closing
+    emit(state.copyWith(
+      alert: event.alert,
+    ));
+    state.alert?.show();
+    print('New popup:');
+    print(event.alert);
+  }
+
+  void _dismissPopup(DismissPopup event, Emitter<HomeState> emit) {
+    // print('About to dismiss:');
+    // print(state.alert);
+    state.alert?.dismiss();
+    // emit(state.noPopup());
+  }
+
   Future _addPlayer(JoinGame event, Emitter<HomeState> emit) async {
     print('Adding player');
     final response = await Http.post(

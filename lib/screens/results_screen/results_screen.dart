@@ -1,5 +1,5 @@
 import 'package:boggle_flutter/bloc/app_bloc.dart';
-import 'package:boggle_flutter/screens/results_screen/bloc/bloc.dart';
+import 'package:boggle_flutter/screens/results_screen/bloc/results_bloc.dart';
 import 'package:boggle_flutter/shared_widgets/general.dart';
 import 'package:boggle_flutter/utils/game/boggle_results.dart';
 import 'package:flutter/material.dart';
