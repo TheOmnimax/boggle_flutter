@@ -1,5 +1,4 @@
-import 'package:equatable/equatable.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
+part of 'create_game_bloc.dart';
 
 abstract class CreateGameEvent extends Equatable {
   const CreateGameEvent();
@@ -25,32 +24,4 @@ class Create extends CreateGameEvent {
         height,
         name,
       ];
-}
-
-class SetName extends CreateGameEvent {
-  const SetName({required this.playerName});
-
-  final String playerName;
-
-  @override
-  List<Object?> get props => [playerName];
-}
-
-class SetTime extends CreateGameEvent {
-  const SetTime({this.gameTime});
-
-  final int? gameTime;
-
-  @override
-  List<Object?> get props => [gameTime];
-}
-
-class NewAlert extends CreateGameEvent {
-  const NewAlert({
-    required this.alert,
-  });
-
-  final Alert alert;
-  @override
-  List<Object?> get props => [alert];
 }
