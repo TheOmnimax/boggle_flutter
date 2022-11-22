@@ -53,3 +53,20 @@ class Joining extends CreateGameState {
     );
   }
 }
+
+class JoinError extends CreateGameState {
+  const JoinError({
+    required this.errorMessage,
+  });
+
+  final String errorMessage;
+
+  @override
+  CreateGameState copyWith({
+    String? errorMessage,
+  }) {
+    return JoinError(
+      errorMessage: errorMessage ?? this.errorMessage,
+    );
+  }
+}
