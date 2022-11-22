@@ -57,6 +57,26 @@ class CreateGameMain extends StatelessWidget {
                 builder: (context) => const BoardScreen(),
               ),
             );
+          } else {
+            Navigator.of(context, rootNavigator: true).pop();
+          }
+
+          if (state is JoinError) {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return WarningPopup(
+                      context: context,
+                      title: 'Error creating game',
+                      message: state.errorMessage,
+                      buttons: [
+                        WarningButton(
+                            label: 'OK',
+                            onPressed: () {
+                              Navigator.of(context, rootNavigator: true).pop();
+                            })
+                      ]);
+                });
           }
         },
         child: BlocBuilder<CreateGameBloc, CreateGameState>(
