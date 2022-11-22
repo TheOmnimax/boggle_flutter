@@ -13,14 +13,12 @@ class GameCreationForm extends StatefulWidget {
 }
 
 class _GameCreationFormState extends State<GameCreationForm> {
+  final formKey = GlobalKey<FormState>();
+  var name = '';
+  var time = 90;
+
   @override
   Widget build(BuildContext context) {
-    final formKey = GlobalKey<FormState>();
-    var name = '';
-    var timeInput = '';
-    var time = 90;
-    final timeController = TextEditingController();
-
     void buttonFunction(int width, int height) {
       widget.createGameFunction(time, width, height, name);
     }
@@ -40,6 +38,7 @@ class _GameCreationFormState extends State<GameCreationForm> {
                 return 'Please enter your name.';
               }
             },
+            initialValue: name,
           ),
           DataInput(
             title: 'Time',
@@ -61,7 +60,7 @@ class _GameCreationFormState extends State<GameCreationForm> {
               FilteringTextInputFormatter.allow(RegExp("[0-9]")),
             ],
             maxLength: 3,
-            initialValue: '90',
+            initialValue: time.toString(),
           ),
           Column(
             children: [
