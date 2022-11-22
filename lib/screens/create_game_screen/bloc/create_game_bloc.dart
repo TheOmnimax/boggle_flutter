@@ -62,6 +62,7 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
 
   Future _create(Create event, Emitter<CreateGameState> emit) async {
     emit(LoadingGame());
+    // try {
     final gameCode = await _createRoom();
     final response = await _createGame(
       roomCode: gameCode,
@@ -73,19 +74,28 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
     );
 
     final statusCode = response.statusCode;
-    final responseBody = json.decode(response.body) as Map<String, dynamic>;
 
-    final playerCode = responseBody['player_id'] as String;
+    if (statusCode >= 400) {
+      emit(JoinError(errorMessage: '$statusCode ${response.reasonPhrase}'));
+    } else {
+      final responseBody = json.decode(response.body) as Map<String, dynamic>;
 
-    appBloc.add(AddGameInfo(
-      roomCode: gameCode,
-      playerId: playerCode,
-      playerName: event.name,
-      isHost: true,
-    ));
-    emit(Joining(
-      gameCode: gameCode,
-      playerCode: playerCode,
-    ));
+      final playerCode = responseBody['player_id'] as String;
+
+      appBloc.add(AddGameInfo(
+        roomCode: gameCode,
+        playerId: playerCode,
+        playerName: event.name,
+        isHost: true,
+      ));
+      emit(Joining(
+        gameCode: gameCode,
+        playerCode: playerCode,
+      ));
+    }
+    // } catch (e) {
+    //   emit(JoinError(errorMessage: e.toString()));
+    //   return;
+    // }
   }
 }
