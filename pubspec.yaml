@@ -63,4 +63,7 @@ flutter:
     - family: LexandDeca
       fonts:
         - asset: fonts/LexendDeca-Regular.ttf
+    - family: Overpass
+      fonts:
+        - asset: fonts/Overpass-VariableFont_wght.ttf
   uses-material-design: true
