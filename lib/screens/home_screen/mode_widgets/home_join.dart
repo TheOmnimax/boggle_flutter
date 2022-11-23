@@ -16,8 +16,8 @@ class JoinWidget extends StatelessWidget {
             ..text = state.name;
           TextEditingController codeTc = TextEditingController()
             ..text = state.roomCode;
-          return TextButton(
-            child: const Text('Join'),
+          return ScreenButton(
+            label: 'Join',
             onPressed: () {
               print(state.errorMessage);
               context.read<HomeBloc>().add(

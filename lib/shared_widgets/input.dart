@@ -32,19 +32,36 @@ class DataInput extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text('$title: '),
-        SizedBox(
-          child: TextFormField(
-            onChanged: onChanged,
-            controller: tc,
-            validator: validator,
-            autofocus: topInput,
-            inputFormatters: inputFormatters,
-            maxLength: maxLength,
-            decoration: InputDecoration(counterText: ''),
-            initialValue: initialValue,
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SizedBox(
+            child: TextFormField(
+              onChanged: onChanged,
+              controller: tc,
+              validator: validator,
+              autofocus: topInput,
+              inputFormatters: inputFormatters,
+              maxLength: maxLength,
+              decoration: InputDecoration(
+                counterText: '',
+                filled: true,
+                fillColor: const Color.fromARGB(100, 237, 237, 237),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: const BorderSide(
+                    color: Colors.blueAccent,
+                    width: 1.0,
+                  ),
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                labelText: title,
+              ),
+              initialValue: initialValue,
+            ),
+            width: width,
           ),
-          width: width,
         ),
       ],
     );

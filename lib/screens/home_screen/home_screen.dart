@@ -1,5 +1,6 @@
 import 'package:boggle_flutter/bloc/app_bloc.dart';
 import 'package:boggle_flutter/constants/constants.dart';
+import 'package:boggle_flutter/screens/board_screen/board_components/components.dart';
 import 'package:boggle_flutter/screens/board_screen/board_screen.dart';
 import 'package:boggle_flutter/screens/create_game_screen/create_game_screen.dart';
 import 'package:boggle_flutter/screens/home_screen/bloc/home_bloc.dart';
@@ -37,7 +38,7 @@ class HomeScreenMain extends StatelessWidget {
     var gameCode = '';
     OverlayEntry? currentOverlay;
     String name = '';
-
+    FocusNode fc = FocusNode();
     return GameArea(
       child: BlocListener<HomeBloc, HomeState>(
         listener: (context, state) {
@@ -67,41 +68,27 @@ class HomeScreenMain extends StatelessWidget {
           }
         },
         child: BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
-          return Column(
-            children: [
-              Text('Version 1.0.2'),
-              Row(
-                children: <Widget>[
-                  // TextButton(
-                  //   child: const Text('Solo'),
-                  //   onPressed: () {
-                  //     Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute<void>(
-                  //         builder: (context) => const CreateGame(
-                  //           playerType: PlayerType.solo,
-                  //         ),
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
-                  TextButton(
-                    child: const Text('Host'),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute<void>(
-                          builder: (context) => const CreateGame(
-                            playerType: PlayerType.host,
-                          ),
+          return Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text('Boggle!'),
+                ScreenButton(
+                  label: 'Host',
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (context) => const CreateGame(
+                          playerType: PlayerType.host,
                         ),
-                      );
-                    },
-                  ),
-                  JoinWidget(),
-                ],
-              ),
-            ],
+                      ),
+                    );
+                  },
+                ),
+                JoinWidget(),
+              ],
+            ),
           );
         }),
       ),

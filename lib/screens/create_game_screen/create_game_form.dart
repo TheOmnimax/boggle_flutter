@@ -75,6 +75,20 @@ class _GameCreationFormState extends State<GameCreationForm> {
                     color: Colors.blue,
                     formKey: formKey,
                   ),
+                  BoardButton(
+                    width: 5,
+                    height: 5,
+                    createGameFunction: buttonFunction,
+                    color: Colors.yellow,
+                    formKey: formKey,
+                  ),
+                  BoardButton(
+                    width: 6,
+                    height: 6,
+                    createGameFunction: buttonFunction,
+                    color: Colors.red,
+                    formKey: formKey,
+                  ),
                 ],
               )
             ],
