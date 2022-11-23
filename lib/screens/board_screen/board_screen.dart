@@ -121,8 +121,64 @@ class _BoardScreenMainState extends State<BoardScreenMain> {
                       ),
                     ],
                   ),
-                  BoggleTable(
-                    rows: state.boggleBoard.tableRows,
+                  Column(
+                    children: [
+                      BoggleTable(
+                        rows: state.boggleBoard.tableRows,
+                      ),
+                      Builder(
+                        builder: (context) {
+                          final focusNode = FocusNode();
+                          if (state is Playing) {
+                            return Column(
+                              children: [
+                                WordEntry(
+                                  focusNode: focusNode,
+                                  onEnter: (String word) {
+                                    context
+                                        .read<BoardBloc>()
+                                        .add(AddWord(word: word));
+                                    focusNode.requestFocus();
+                                  },
+                                  onChanged: (String word) {
+                                    context
+                                        .read<BoardBloc>()
+                                        .add(EnteredText(text: word));
+                                  },
+                                  text: state.enteredText,
+                                ),
+                                ScreenButton(
+                                  label: 'Send',
+                                  onPressed: () {
+                                    context.read<BoardBloc>().add(AddWord(
+                                          word: state.enteredText,
+                                        ));
+                                  },
+                                ),
+                              ],
+                            );
+                          } else if (state is Ready) {
+                            if (state.player.isHost) {
+                              return ScreenButton(
+                                label: 'Start',
+                                onPressed: () {
+                                  context
+                                      .read<BoardBloc>()
+                                      .add(const StartGame());
+                                },
+                              );
+                            } else {
+                              return const Text(
+                                  'Please wait for the host to start the game');
+                            }
+                          } else if (state is Complete) {
+                            return const Text('Done!');
+                          } else {
+                            return Container();
+                          }
+                        },
+                      ),
+                    ],
                   ),
                   Column(
                     children: [
@@ -147,56 +203,6 @@ class _BoardScreenMainState extends State<BoardScreenMain> {
                           ),
                         ],
                       ),
-                      Builder(builder: (context) {
-                        final focusNode = FocusNode();
-                        if (state is Playing) {
-                          return Column(
-                            children: [
-                              WordEntry(
-                                focusNode: focusNode,
-                                onEnter: (String word) {
-                                  context
-                                      .read<BoardBloc>()
-                                      .add(AddWord(word: word));
-                                  focusNode.requestFocus();
-                                },
-                                onChanged: (String word) {
-                                  context
-                                      .read<BoardBloc>()
-                                      .add(EnteredText(text: word));
-                                },
-                                text: state.enteredText,
-                              ),
-                              ScreenButton(
-                                label: 'Send',
-                                onPressed: () {
-                                  context.read<BoardBloc>().add(AddWord(
-                                        word: state.enteredText,
-                                      ));
-                                },
-                              ),
-                            ],
-                          );
-                        } else if (state is Ready) {
-                          if (state.player.isHost) {
-                            return ScreenButton(
-                              label: 'Start',
-                              onPressed: () {
-                                context
-                                    .read<BoardBloc>()
-                                    .add(const StartGame());
-                              },
-                            );
-                          } else {
-                            return const Text(
-                                'Please wait for the host to start the game');
-                          }
-                        } else if (state is Complete) {
-                          return const Text('Done!');
-                        } else {
-                          return Container();
-                        }
-                      }),
                     ],
                   ),
                 ],
