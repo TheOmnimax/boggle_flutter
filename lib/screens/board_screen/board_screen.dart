@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
+import '../../shared_widgets/buttons.dart';
 import 'bloc/board_bloc/board_bloc.dart';
 import 'board_components/components.dart';
 
@@ -147,44 +148,44 @@ class _BoardScreenMainState extends State<BoardScreenMain> {
                         ],
                       ),
                       Builder(builder: (context) {
+                        final focusNode = FocusNode();
                         if (state is Playing) {
                           return Column(
                             children: [
                               WordEntry(
+                                focusNode: focusNode,
+                                onEnter: (String word) {
+                                  context
+                                      .read<BoardBloc>()
+                                      .add(AddWord(word: word));
+                                  focusNode.requestFocus();
+                                },
                                 onChanged: (String word) {
-                                  if (word.contains('\n')) {
-                                    word.replaceAll('\n', '');
-                                    context
-                                        .read<BoardBloc>()
-                                        .add(AddWord(word: word));
-                                  } else {
-                                    context
-                                        .read<BoardBloc>()
-                                        .add(EnteredText(text: word));
-                                  }
+                                  context
+                                      .read<BoardBloc>()
+                                      .add(EnteredText(text: word));
                                 },
                                 text: state.enteredText,
                               ),
-                              TextButton(
+                              ScreenButton(
+                                label: 'Send',
                                 onPressed: () {
                                   context.read<BoardBloc>().add(AddWord(
                                         word: state.enteredText,
                                       ));
                                 },
-                                child: const Text('Send'),
                               ),
                             ],
                           );
                         } else if (state is Ready) {
                           if (state.player.isHost) {
-                            return TextButton(
+                            return ScreenButton(
+                              label: 'Start',
                               onPressed: () {
                                 context
                                     .read<BoardBloc>()
                                     .add(const StartGame());
                               },
-                              child: const Text(
-                                  'Start'), // TODO: Hide for non-host
                             );
                           } else {
                             return const Text(
