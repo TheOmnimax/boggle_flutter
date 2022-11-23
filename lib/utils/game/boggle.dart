@@ -98,7 +98,10 @@ class BoggleCell extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(2.0),
         child: Container(
-          child: Text(letter),
+          child: Text(
+            letter,
+            style: const TextStyle(fontFamilyFallback: ['Overpass']),
+          ),
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: const Color(0xFFFFFFF0),
