@@ -1,6 +1,5 @@
 import 'package:boggle_flutter/bloc/app_bloc.dart';
 import 'package:boggle_flutter/constants/constants.dart';
-import 'package:boggle_flutter/screens/board_screen/board_components/components.dart';
 import 'package:boggle_flutter/screens/board_screen/board_screen.dart';
 import 'package:boggle_flutter/screens/create_game_screen/create_game_screen.dart';
 import 'package:boggle_flutter/screens/home_screen/bloc/home_bloc.dart';
