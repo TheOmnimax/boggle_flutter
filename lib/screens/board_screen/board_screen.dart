@@ -7,10 +7,14 @@ import 'package:boggle_flutter/utils/game/boggle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:boggle_flutter/screens/board_screen/bloc/timer_bloc/timer_bloc.dart';
 
 import '../../shared_widgets/buttons.dart';
 import 'bloc/board_bloc/board_bloc.dart';
-import 'board_components/components.dart';
+
+part 'board_components/timer_component.dart';
+part 'board_components/word_entry.dart';
+part 'board_components/word_list.dart';
 
 class BoardScreen extends StatelessWidget {
   const BoardScreen({
@@ -45,7 +49,7 @@ class _BoardScreenMainState extends State<BoardScreenMain> {
         if (state is Complete) {
           popup = Alert(
             context: context,
-            title: 'Time\'s up!',
+            title: "Time's up!",
             desc: 'Please wait for the results to be calculated...',
             buttons: [],
             style: popupStyle,
@@ -180,27 +184,26 @@ class _BoardScreenMainState extends State<BoardScreenMain> {
                       ),
                     ],
                   ),
-                  Column(
+                  // Table(
+                  //   TableRow
+                  // )
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
+                      Column(
+                        children: [
+                          const Text('Accepted'),
+                          Text(state.player.getApprovedWords().join('/n')),
+                        ],
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Column(
-                            children: [
-                              const Text('Accepted'),
-                              Text(state.player.getApprovedWords().join('\n')),
-                            ],
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text('Rejected'),
-                              Text(state.player.getRejectedString()),
-                            ],
-                          ),
+                          const Text('Rejected'),
+                          Text(state.player.getRejectedString()),
                         ],
                       ),
                     ],

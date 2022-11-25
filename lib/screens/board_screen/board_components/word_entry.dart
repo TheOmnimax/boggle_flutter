@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+part of 'package:boggle_flutter/screens/board_screen/board_screen.dart';
 
 class WordEntry extends StatelessWidget {
   const WordEntry({
