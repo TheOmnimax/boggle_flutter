@@ -184,30 +184,9 @@ class _BoardScreenMainState extends State<BoardScreenMain> {
                       ),
                     ],
                   ),
-                  // Table(
-                  //   TableRow
-                  // )
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Column(
-                        children: [
-                          const Text('Accepted'),
-                          Text(state.player.getApprovedWords().join('/n')),
-                        ],
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text('Rejected'),
-                          Text(state.player.getRejectedString()),
-                        ],
-                      ),
-                    ],
-                  ),
+                  WordListDispay(
+                      acceptedWords: state.player.getApprovedWords(),
+                      rejectedString: state.player.getRejectedString()),
                 ],
               ),
             );
