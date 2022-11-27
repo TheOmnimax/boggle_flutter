@@ -34,12 +34,14 @@ class BoggleResults {
     required this.bogglePlayerResults,
     required this.winningScore,
     required this.winnerNames,
+    required this.missedWords,
   });
 
   final Map<String, List<String>> sharedWords;
   final List<BogglePlayerResults> bogglePlayerResults;
   final int winningScore;
   final List<String> winnerNames;
+  final List<String> missedWords;
 
   static BoggleResults fromJson(Map<String, dynamic> data) {
     // Shared words
@@ -70,11 +72,14 @@ class BoggleResults {
       winnerNames.add(item as String);
     }
 
+    final missedWords = List<String>.from(data['missed_words'] as List);
+
     return BoggleResults(
       sharedWords: sharedWords,
       bogglePlayerResults: allPlayerData,
       winningScore: data['winning_score'] as int,
       winnerNames: winnerNames,
+      missedWords: missedWords,
     );
   }
 }
