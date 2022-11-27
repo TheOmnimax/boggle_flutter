@@ -38,9 +38,9 @@ class WordListDispay extends StatelessWidget {
       children: [
         TableRow(
           children: [
-            _WordListCell(
+            StyledTableCell(
               child: Row(
-                children: [
+                children: const [
                   Text('Accepted'),
                   Icon(
                     Icons.done,
@@ -48,9 +48,9 @@ class WordListDispay extends StatelessWidget {
                 ],
               ),
             ),
-            _WordListCell(
+            StyledTableCell(
                 child: Row(
-              children: [
+              children: const [
                 Text('Rejected'),
                 Icon(
                   Icons.close,

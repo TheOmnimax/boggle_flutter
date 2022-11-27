@@ -9,7 +9,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:boggle_flutter/screens/board_screen/bloc/timer_bloc/timer_bloc.dart';
 
-import '../../shared_widgets/buttons.dart';
+import 'package:boggle_flutter/shared_widgets/buttons.dart';
+import 'package:boggle_flutter/shared_widgets/table_widgets.dart';
 import 'bloc/board_bloc/board_bloc.dart';
 
 part 'board_components/timer_component.dart';
@@ -72,7 +73,9 @@ class _BoardScreenMainState extends State<BoardScreenMain> {
                   Navigator.push(
                     context,
                     MaterialPageRoute<void>(
-                      builder: (context) => const ResultsScreen(),
+                      builder: (context) => ResultsScreen(
+                        boggleBoard: state.boggleBoard,
+                      ),
                     ),
                   );
                 },
