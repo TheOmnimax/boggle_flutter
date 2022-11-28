@@ -13,6 +13,7 @@ class DataInput extends StatelessWidget {
     this.inputFormatters,
     this.maxLength,
     this.initialValue,
+    this.focusNode,
     Key? key,
   }) : super(key: key);
 
@@ -26,6 +27,7 @@ class DataInput extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final int? maxLength;
   final String? initialValue;
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +38,7 @@ class DataInput extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: SizedBox(
             child: TextFormField(
+              focusNode: focusNode,
               onChanged: onChanged,
               controller: tc,
               validator: validator,

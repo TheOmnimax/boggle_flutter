@@ -26,21 +26,17 @@ class ShowPopup extends HomeEvent {
   List<Object?> get props => [alert];
 }
 
-class DismissPopup extends HomeEvent {
-  const DismissPopup();
-}
-
 class JoinGame extends HomeEvent {
   const JoinGame({
-    required this.gameCode,
+    required this.roomCode,
     required this.name,
   });
 
-  final String gameCode;
+  final String roomCode;
   final String name;
 
   @override
-  List<Object?> get props => [gameCode, name];
+  List<Object?> get props => [roomCode, name];
 }
 
 class CloseError extends HomeEvent {
