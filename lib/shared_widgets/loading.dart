@@ -7,6 +7,29 @@ const bigLoading = SpinKitDualRing(
   color: themeColor,
 );
 
+class LoadingDialog extends StatelessWidget {
+  const LoadingDialog({
+    required this.context,
+    this.title = 'Loading...',
+    this.children = const <Widget>[],
+    Key? key,
+  }) : super(key: key);
+
+  final BuildContext context;
+  final String title;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = List<Widget>.from(children);
+    c.insert(0, bigLoading);
+    return SimpleDialog(
+      title: Text(title),
+      children: c,
+    );
+  }
+}
+
 OverlayEntry loadingOverlay({
   required double screenWidth,
   double top = 0,

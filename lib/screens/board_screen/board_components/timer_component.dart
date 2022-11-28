@@ -1,7 +1,4 @@
-import 'package:boggle_flutter/screens/board_screen/bloc/board_bloc/board_bloc.dart';
-import 'package:boggle_flutter/screens/board_screen/bloc/timer_bloc/timer_bloc.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+part of 'package:boggle_flutter/screens/board_screen/board_screen.dart';
 
 class TimerComponent extends StatelessWidget {
   const TimerComponent({

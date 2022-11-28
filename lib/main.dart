@@ -36,6 +36,12 @@ class Main extends StatelessWidget {
       title: 'Boggle',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: 'LexandDeca',
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(
+            fontSize: 24,
+          ),
+        ),
       ),
       initialRoute: '/',
       routes: {

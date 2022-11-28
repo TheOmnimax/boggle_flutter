@@ -1,5 +1,52 @@
 import 'package:flutter/material.dart';
 
+class WarningButton extends StatelessWidget {
+  const WarningButton({
+    required this.label,
+    required this.onPressed,
+    Key? key,
+  }) : super(key: key);
+
+  final String label;
+  final Function() onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: onPressed,
+      child: Text(label),
+    );
+  }
+}
+
+class WarningPopup extends StatelessWidget {
+  const WarningPopup({
+    required this.context,
+    required this.title,
+    required this.message,
+    required this.buttons,
+    Key? key,
+  }) : super(key: key);
+
+  final BuildContext context;
+  final String title;
+  final String message;
+  final List<WarningButton> buttons;
+
+  @override
+  Widget build(BuildContext context) {
+    return SimpleDialog(
+      title: Text(title),
+      children: [
+        Text(message),
+        Row(
+          children: buttons,
+        )
+      ],
+    );
+  }
+}
+
 Future<void> showPopup({
   required BuildContext context,
   required String title,
@@ -56,3 +103,12 @@ OverlayEntry overlayPopup({
     },
   );
 }
+
+// class AlertWithBloc extends Alert {
+//   AlertWithBloc({Key? key}) : super();
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container();
+//   }
+// }
