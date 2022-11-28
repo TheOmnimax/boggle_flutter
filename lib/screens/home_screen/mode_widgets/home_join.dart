@@ -63,12 +63,14 @@ class _JoinPopupState extends State<JoinPopup> {
                 roomFocus: roomFocus,
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  TextButton(
+                  ScreenButton(
                       onPressed: () {
+                        context.read<HomeBloc>().add(CancelJoin());
                         Navigator.pop(context);
                       },
-                      child: Text('Cancel')),
+                      label: 'Cancel'),
                   JoinButton(
                     joinKey: joinKey,
                     onPressed: () {
@@ -101,9 +103,19 @@ class JoinButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
       if (state is Joining) {
-        return Text('Loading');
+        return const SizedBox(
+          width: 106,
+          child: SpinKitDualRing(
+            color: Colors.blue,
+            lineWidth: 4,
+            size: 20,
+          ),
+        );
       } else {
-        return TextButton(onPressed: onPressed, child: Text('Join'));
+        return ScreenButton(
+          onPressed: onPressed,
+          label: 'Join',
+        );
       }
     });
   }

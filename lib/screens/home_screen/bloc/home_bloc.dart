@@ -17,6 +17,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HostGame>(_hostGame);
     on<JoinGame>(_addPlayer);
     on<CloseError>(_closeError);
+    on<CancelJoin>(_cancelJoin);
   }
 
   final AppBloc appBloc;
@@ -27,7 +28,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Future _addPlayer(JoinGame event, Emitter<HomeState> emit) async {
     print('Adding player');
     emit(Joining());
-    await Future.delayed(Duration(seconds: 1));
     final response = await Http.post(
       uri: baseUrl + 'add-player',
       body: {
@@ -64,5 +64,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     if (state.errorMessage != '') {
       emit(state.copyWith(errorMessage: ''));
     }
+  }
+
+  void _cancelJoin(CancelJoin event, Emitter<HomeState> emit) {
+    emit(MainState());
   }
 }
