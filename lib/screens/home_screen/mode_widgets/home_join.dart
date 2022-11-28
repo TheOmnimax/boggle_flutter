@@ -1,96 +1,136 @@
 part of 'package:boggle_flutter/screens/home_screen/home_screen.dart';
 
-class JoinWidget extends StatelessWidget {
-  const JoinWidget({
+class JoinPopup extends StatefulWidget {
+  const JoinPopup({
+    required this.onPressed,
     Key? key,
   }) : super(key: key);
 
+  final Function(String, String) onPressed;
+  // final String? errorMessage;
+
+  @override
+  State<JoinPopup> createState() => _JoinPopupState();
+}
+
+class _JoinPopupState extends State<JoinPopup> {
   @override
   Widget build(BuildContext context) {
-    final alert = Alert(context: context);
-    return BlocProvider(
-      create: (context) => PopupBloc(),
-      child: BlocBuilder<PopupBloc, PopupState>(
-        builder: (context, state) {
-          TextEditingController nameTc = TextEditingController()
-            ..text = state.name;
-          TextEditingController codeTc = TextEditingController()
-            ..text = state.roomCode;
-          return ScreenButton(
-            label: 'Join',
-            onPressed: () {
-              print(state.errorMessage);
-              context.read<HomeBloc>().add(
-                    ShowPopup(
-                      alert: Alert(
-                        context: context,
-                        title: 'Join game',
-                        content: Column(
-                          children: [
-                            DataInput(
-                              title: 'Game code',
-                              onChanged: (value) {
-                                context.read<PopupBloc>().add(
-                                      UpdateName(name: value),
-                                    );
-                              },
-                              tc: nameTc,
-                            ),
-                            DataInput(
-                              title: 'Room code',
-                              tc: codeTc,
-                              onChanged: (value) {
-                                context
-                                    .read<PopupBloc>()
-                                    .add(UpdateCode(roomCode: value));
-                              },
-                            ),
-                            Text(state.errorMessage),
-                          ],
-                        ),
-                        buttons: [
-                          DialogButton(
-                            child: Text('Cancel'),
-                            onPressed: () {
-                              // TODO: QUESTION: Why does it keep using a stale context?
-                              context.read<HomeBloc>().add(
-                                    const DismissPopup(),
-                                  );
-                            },
-                          ),
-                          DialogButton(
-                            child: Text('Join'),
-                            onPressed: () {
-                              if (state.name == '') {
-                                context.read<PopupBloc>().add(const UpdateError(
-                                    errorMessage: 'Please provide your name'));
-                              } else if (state.roomCode == '') {
-                                context.read<PopupBloc>().add(const UpdateError(
-                                    errorMessage:
-                                        'Please provide the game code'));
-                              } else {
-                                context.read<HomeBloc>().add(
-                                      const DismissPopup(),
-                                    );
-                                context.read<HomeBloc>().add(
-                                      ShowPopup(
-                                        alert: Alert(
-                                          context: context,
-                                          content: bigLoading,
-                                        ),
-                                      ),
-                                    );
-                              }
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-            },
-          );
-        },
-      ),
+    var name = '';
+    var roomCode = '';
+    final joinKey = GlobalKey<FormState>();
+    final nameFocus = FocusNode();
+    final roomFocus = FocusNode();
+
+    return SimpleDialog(
+      title: Text('Join game'),
+      children: [
+        Form(
+          key: joinKey,
+          child: Column(
+            children: [
+              DataInput(
+                title: 'Name',
+                topInput: true,
+                focusNode: nameFocus,
+                onChanged: (String value) {
+                  name = value;
+                },
+                validator: (String? value) {
+                  if (value == '') {
+                    nameFocus.requestFocus();
+                    return 'Please enter your name!';
+                  }
+                },
+              ),
+              DataInput(
+                title: 'Room code',
+                focusNode: roomFocus,
+                onChanged: (String value) {
+                  roomCode = value;
+                  context.read<HomeBloc>().add(CloseError());
+                },
+                validator: (String? value) {
+                  if (value == '') {
+                    if (name != '') {
+                      roomFocus.requestFocus();
+                    }
+                    return 'Please enter the room code!';
+                  } else {}
+                },
+              ),
+              ErrorWidget(
+                roomFocus: roomFocus,
+              ),
+              Row(
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('Cancel')),
+                  JoinButton(
+                    joinKey: joinKey,
+                    onPressed: () {
+                      if (joinKey.currentState!.validate()) {
+                        widget.onPressed(name, roomCode);
+                      }
+                    },
+                  )
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
     );
+  }
+}
+
+class JoinButton extends StatelessWidget {
+  const JoinButton({
+    required this.joinKey,
+    required this.onPressed,
+    Key? key,
+  }) : super(key: key);
+
+  final GlobalKey<FormState> joinKey;
+  final Function() onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
+      if (state is Joining) {
+        return Text('Loading');
+      } else {
+        return TextButton(onPressed: onPressed, child: Text('Join'));
+      }
+    });
+  }
+}
+
+class ErrorWidget extends StatelessWidget {
+  const ErrorWidget({
+    required this.roomFocus,
+    Key? key,
+  }) : super(key: key);
+
+  final FocusNode roomFocus;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
+      if (state.errorMessage != '') {
+        roomFocus.requestFocus();
+      }
+      print('Updating error');
+      return Text(
+        state.errorMessage,
+        style: TextStyle(
+          fontSize: 16,
+          color: Colors.red,
+        ),
+      );
+    });
   }
 }
