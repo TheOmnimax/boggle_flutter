@@ -1,28 +1,8 @@
-import 'package:equatable/equatable.dart';
+part of 'home_bloc.dart';
 
 abstract class HomeState extends Equatable {
-  const HomeState();
-
-  @override
-  List<Object?> get props => [];
-
-  HomeState copyWith();
-}
-
-class MainState extends HomeState {
-  const MainState({
-    String gameCode = '',
-  });
-
-  @override
-  MainState copyWith() {
-    return MainState();
-  }
-}
-
-class JoinError extends HomeState {
-  const JoinError({
-    required this.errorMessage,
+  const HomeState({
+    this.errorMessage = '',
   });
 
   final String errorMessage;
@@ -30,13 +10,34 @@ class JoinError extends HomeState {
   @override
   List<Object?> get props => [errorMessage];
 
+  HomeState copyWith({String? errorMessage});
+}
+
+class MainState extends HomeState {
+  const MainState({
+    errorMessage = '',
+  }) : super(errorMessage: errorMessage);
+
   @override
-  JoinError copyWith({
-    String? errorMessage,
-  }) {
-    return JoinError(
+  List<Object?> get props => [errorMessage];
+
+  @override
+  MainState copyWith({String? errorMessage}) {
+    print('Copy');
+    return MainState(
       errorMessage: errorMessage ?? this.errorMessage,
     );
+  }
+}
+
+class LoadingGame extends HomeState {
+  const LoadingGame();
+
+  @override
+  LoadingGame copyWith({
+    String? errorMessage,
+  }) {
+    return LoadingGame();
   }
 }
 
@@ -44,7 +45,9 @@ class Joining extends HomeState {
   const Joining();
 
   @override
-  Joining copyWith() {
+  Joining copyWith({
+    String? errorMessage,
+  }) {
     return Joining();
   }
 }

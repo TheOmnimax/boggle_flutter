@@ -2,14 +2,21 @@ import 'package:boggle_flutter/bloc/app_bloc.dart';
 import 'package:boggle_flutter/constants/constants.dart';
 import 'package:boggle_flutter/screens/board_screen/board_screen.dart';
 import 'package:boggle_flutter/screens/create_game_screen/create_game_screen.dart';
-import 'package:boggle_flutter/screens/home_screen/bloc/bloc.dart';
+import 'package:boggle_flutter/screens/home_screen/bloc/home_bloc.dart';
+import 'package:boggle_flutter/screens/home_screen/popup_bloc/popup_bloc.dart';
+import 'package:boggle_flutter/screens/results_screen/results_screen.dart';
 import 'package:boggle_flutter/shared_widgets/buttons.dart';
 import 'package:boggle_flutter/shared_widgets/general.dart';
 import 'package:boggle_flutter/shared_widgets/input.dart';
-import 'package:boggle_flutter/shared_widgets/show_popup.dart';
+import 'package:boggle_flutter/shared_widgets/loading.dart';
+import 'package:boggle_flutter/utils/game/boggle_results.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+
+part 'package:boggle_flutter/screens/home_screen/mode_widgets/home_host.dart';
+part 'package:boggle_flutter/screens/home_screen/mode_widgets/home_join.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -28,126 +35,72 @@ class HomeScreenMain extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mqData = MediaQuery.of(context);
-    final screenSize = mqData.size;
-    var gameCode = '';
-    OverlayEntry? currentOverlay;
-    String name = '';
-
+    FocusNode fc = FocusNode();
     return GameArea(
       child: BlocListener<HomeBloc, HomeState>(
         listener: (context, state) {
-          if (state is Joining) {
+          if (state is LoadingGame) {
             // If already joined game, then get ready to push the board screen
-            if (currentOverlay?.mounted ?? false) {
-              currentOverlay?.remove();
-            }
+
             Navigator.push(
               context,
               MaterialPageRoute<void>(
                 builder: (context) => const BoardScreen(),
               ),
             );
-          } else if (state is JoinError) {
-            // There was an error when attempting to join the game.
-            final popup = Alert(
-              context: context,
-              title: 'Error joining game',
-              desc: state.errorMessage,
-              buttons: [
-                PopupCloseButton(context: context),
-              ],
-              style: popupStyle,
-            );
-            popup.show();
           }
         },
         child: BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
-          final nameTc = TextEditingController();
-          return Column(
-            children: [
-              Text('Version 1.0.0'),
-              Row(
-                children: <Widget>[
-                  // TextButton(
-                  //   child: const Text('Solo'),
-                  //   onPressed: () {
-                  //     Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute<void>(
-                  //         builder: (context) => const CreateGame(
-                  //           playerType: PlayerType.solo,
-                  //         ),
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
-                  TextButton(
-                    child: const Text('Host'),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute<void>(
-                          builder: (context) => const CreateGame(
-                            playerType: PlayerType.host,
-                          ),
+          return Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text('Boggle!'),
+                ScreenButton(
+                  label: 'Host',
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (context) => const CreateGame(
+                          playerType: PlayerType.host,
                         ),
-                      );
-                    },
-                  ),
-                  TextButton(
-                    child: const Text('Join'),
-                    onPressed: () {
-                      if (currentOverlay?.mounted ?? false) {
-                        currentOverlay?.remove();
-                      }
-                      currentOverlay = overlayPopup(
-                        screenWidth: screenSize.width,
-                        child: Column(
-                          children: <Widget>[
-                            NameInput(
-                              onChanged: (value) {
-                                name = value;
-                              },
-                              tc: nameTc,
-                            ),
-                            TextField(
-                              onChanged: (value) {
-                                gameCode = value;
+                      ),
+                    );
+                  },
+                ),
+                ScreenButton(
+                  label: 'Join',
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (subContext) {
+                          return BlocProvider.value(
+                            //https://stackoverflow.com/a/71232348/10368970
+                            value: context.read<HomeBloc>(),
+                            child: JoinPopup(
+                              onPressed: (String name, String roomCode) {
+                                print('About to run');
+                                context.read<HomeBloc>().add(
+                                    JoinGame(roomCode: roomCode, name: name));
+                                print('Ran');
                               },
                             ),
-                            Row(
-                              children: [
-                                TextButton(
-                                    onPressed: () {
-                                      currentOverlay?.remove();
-                                    },
-                                    child: const Text('Cancel')),
-                                TextButton(
-                                  child: const Text('join'),
-                                  onPressed: () {
-                                    // context.read<AppBloc>().add(AddPlayer(
-                                    //       roomCode: gameCode,
-                                    //       name: name,
-                                    //     ));
-                                    context.read<HomeBloc>().add(JoinGame(
-                                          name: name,
-                                          gameCode: gameCode,
-                                        ));
-                                    currentOverlay?.remove();
-                                  },
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      );
-                      Overlay.of(context)?.insert(currentOverlay!);
-                    },
-                  ),
-                ],
-              ),
-            ],
+                          );
+                          // return JoinPopup(
+                          //   onPressed: (String name, String roomCode) {
+                          //     print('About to run');
+                          //     context.read<HomeBloc>().add(
+                          //         JoinGame(roomCode: roomCode, name: name));
+                          //     print('Ran');
+                          //   },
+                          // );
+                        });
+                  },
+                ),
+              ],
+            ),
           );
         }),
       ),

@@ -3,19 +3,19 @@ import 'dart:convert';
 import 'package:boggle_flutter/bloc/app_bloc.dart';
 import 'package:boggle_flutter/constants/constants.dart';
 import 'package:boggle_flutter/utils/http.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
+import 'package:rflutter_alert/rflutter_alert.dart';
 
-import 'bloc.dart';
+part 'create_game_event.dart';
+part 'create_game_state.dart';
 
 class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
   CreateGameBloc({
     required this.appBloc,
   }) : super(const MainState()) {
     on<Create>(_create);
-    on<SetName>(_setName);
-    on<SetTime>(_setTime);
-    on<NewAlert>(_newAlert);
   }
 
   final AppBloc appBloc;
@@ -61,46 +61,41 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
   }
 
   Future _create(Create event, Emitter<CreateGameState> emit) async {
+    emit(LoadingGame());
+    // try {
     final gameCode = await _createRoom();
-    // TODO: Update with more customized time
     final response = await _createGame(
       roomCode: gameCode,
       width: event.width,
       height: event.height,
-      time: state.gameTime ??
+      time: event.time ??
           90, // TIME SENT TO SERVER. The game time should never actually be null.
       name: event.name,
     );
 
     final statusCode = response.statusCode;
-    final responseBody = json.decode(response.body) as Map<String, dynamic>;
 
-    final playerCode = responseBody['player_id'] as String;
+    if (statusCode >= 400) {
+      emit(JoinError(errorMessage: '$statusCode ${response.reasonPhrase}'));
+    } else {
+      final responseBody = json.decode(response.body) as Map<String, dynamic>;
 
-    appBloc.add(AddGameInfo(
-      roomCode: gameCode,
-      playerId: playerCode,
-      playerName: event.name,
-      isHost: true,
-    ));
-    emit(Joining(
-      gameCode: gameCode,
-      playerCode: playerCode,
-    ));
-  }
+      final playerCode = responseBody['player_id'] as String;
 
-  void _setName(SetName event, Emitter<CreateGameState> emit) {
-    print('Setting name to ${event.playerName}');
-    emit(state.copyWith(playerName: event.playerName));
-  }
-
-  void _setTime(SetTime event, Emitter<CreateGameState> emit) {
-    emit(state.copyWith(gameTime: event.gameTime ?? 0));
-  }
-
-  void _newAlert(NewAlert event, Emitter<CreateGameState> emit) {
-    state.alert?.dismiss();
-    emit(state.copyWith(alert: event.alert));
-    state.alert?.show();
+      appBloc.add(AddGameInfo(
+        roomCode: gameCode,
+        playerId: playerCode,
+        playerName: event.name,
+        isHost: true,
+      ));
+      emit(Joining(
+        gameCode: gameCode,
+        playerCode: playerCode,
+      ));
+    }
+    // } catch (e) {
+    //   emit(JoinError(errorMessage: e.toString()));
+    //   return;
+    // }
   }
 }

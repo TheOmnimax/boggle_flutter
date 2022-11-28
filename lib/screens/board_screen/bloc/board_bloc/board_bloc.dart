@@ -167,14 +167,14 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
   }
 
   Future _addWord(AddWord event, Emitter<BoardState> emit) async {
-    final word = event.word;
+    final word = event.word.toLowerCase();
     final uri = Uri.parse(baseUrl + 'add-word');
 
     final body = json.encode({
       'room_code': appBloc.state.roomCode,
       'player_id': state.player.id,
       'timestamp': DateTime.now().millisecondsSinceEpoch,
-      'word': event.word,
+      'word': word,
     });
 
     final response = await http.post(

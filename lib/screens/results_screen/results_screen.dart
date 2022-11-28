@@ -1,14 +1,22 @@
 import 'package:boggle_flutter/bloc/app_bloc.dart';
-import 'package:boggle_flutter/screens/results_screen/bloc/bloc.dart';
+import 'package:boggle_flutter/screens/results_screen/bloc/results_bloc.dart';
 import 'package:boggle_flutter/shared_widgets/general.dart';
+import 'package:boggle_flutter/utils/game/boggle.dart';
 import 'package:boggle_flutter/utils/game/boggle_results.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:boggle_flutter/shared_widgets/table_widgets.dart';
+
+part 'results_table.dart';
+
 class ResultsScreen extends StatelessWidget {
   const ResultsScreen({
+    required this.boggleBoard,
     Key? key,
   }) : super(key: key);
+
+  final BoggleBoard boggleBoard;
 
   @override
   Widget build(BuildContext context) {
@@ -16,25 +24,20 @@ class ResultsScreen extends StatelessWidget {
       create: (context) => ResultsBloc(
         appBloc: context.read<AppBloc>(),
       )..add(const Loading()),
-      child: const ResultsScreenMain(),
+      child: ResultsScreenMain(
+        boggleBoard: boggleBoard,
+      ),
     );
   }
 }
 
 class ResultsScreenMain extends StatelessWidget {
-  const ResultsScreenMain({Key? key}) : super(key: key);
+  const ResultsScreenMain({
+    required this.boggleBoard,
+    Key? key,
+  }) : super(key: key);
 
-  List<Widget> getPlayerCols({
-    required List<BogglePlayerResults> bogglePlayerResults,
-  }) {
-    final playerCols = <Widget>[];
-    for (final player in bogglePlayerResults) {
-      playerCols.add(PlayerResultWidget(
-        bogglePlayerResults: player,
-      ));
-    }
-    return playerCols;
-  }
+  final BoggleBoard boggleBoard;
 
   @override
   Widget build(BuildContext context) {
@@ -44,19 +47,9 @@ class ResultsScreenMain extends StatelessWidget {
           if (state is LoadingState) {
             return const Text('Loading...');
           } else if (state is MainState) {
-            final cols = getPlayerCols(
-                bogglePlayerResults: state.boggleResults.bogglePlayerResults);
-            cols.insert(
-                0,
-                Column(
-                  children: [
-                    Text(
-                        'Winner: ${state.boggleResults.winnerNames.toString()}'),
-                    Text('Score: ${state.boggleResults.winningScore}')
-                  ],
-                ));
-            return Row(
-              children: cols,
+            return ResultsView(
+              boggleResults: state.boggleResults,
+              boggleBoard: boggleBoard,
             );
           } else {
             return Text('Invalid state: $state');
@@ -67,48 +60,103 @@ class ResultsScreenMain extends StatelessWidget {
   }
 }
 
-class PlayerResultWidget extends StatelessWidget {
-  const PlayerResultWidget({
-    required this.bogglePlayerResults,
+class ResultsView extends StatelessWidget {
+  const ResultsView({
+    required this.boggleResults,
+    required this.boggleBoard,
     Key? key,
   }) : super(key: key);
 
-  final BogglePlayerResults bogglePlayerResults;
-
-  List<Widget> getWordRows({required Map<String, int> scoreList}) {
-    final wordRows = <Widget>[];
-    for (final word in scoreList.keys) {
-      wordRows.add(WordRow(
-        word: word,
-        score: scoreList[word] as int,
-      ));
-    }
-    return wordRows;
-  }
+  final BoggleResults boggleResults;
+  final BoggleBoard boggleBoard;
 
   @override
   Widget build(BuildContext context) {
-    final rows = getWordRows(scoreList: bogglePlayerResults.scoreList);
-    rows.insert(
-        0, Text('${bogglePlayerResults.name}: ${bogglePlayerResults.score}'));
-    return Column(
-      children: rows,
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        // crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          WinnerWidget(boggleResults: boggleResults),
+          const SizedBox(height: 10),
+          ResultsTable(boggleResults: boggleResults),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SharedWords(
+                sharedWords: boggleResults.sharedWords,
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+              BoggleTable(
+                rows: boggleBoard.tableRows,
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+              MissedWords(missedWords: boggleResults.missedWords),
+            ],
+          )
+        ],
+      ),
     );
   }
 }
 
-class WordRow extends StatelessWidget {
-  const WordRow({
-    required this.word,
-    required this.score,
+class WinnerWidget extends StatelessWidget {
+  const WinnerWidget({
+    required this.boggleResults,
     Key? key,
   }) : super(key: key);
 
-  final String word;
-  final int score;
+  final BoggleResults boggleResults;
 
   @override
   Widget build(BuildContext context) {
-    return Text('$word: $score');
+    final winners = boggleResults.winnerNames;
+    if (winners.isEmpty) {
+      return Text('Everyone got 0 points. There were no winners!');
+    } else if (winners.length == 1) {
+      return Text(
+          'Winner: ${winners[0]} (${boggleResults.winningScore} points)');
+    } else {
+      return Text(
+          'Winners (tied): ${winners.join((', '))} (${boggleResults.winningScore} points)');
+    }
+  }
+}
+
+class SharedWords extends StatelessWidget {
+  const SharedWords({
+    required this.sharedWords,
+    Key? key,
+  }) : super(key: key);
+
+  final Map<String, List<String>> sharedWords;
+
+  @override
+  Widget build(BuildContext context) {
+    final sharedList = <String>[];
+    sharedWords.forEach((key, value) {
+      sharedList.add('$key: ${value.join(', ')}');
+    });
+    return StandardTable(columnData: {'Shared words': sharedList.join('\n')});
+  }
+}
+
+class MissedWords extends StatelessWidget {
+  const MissedWords({
+    required this.missedWords,
+    Key? key,
+  }) : super(key: key);
+
+  final List<String> missedWords;
+
+  @override
+  Widget build(BuildContext context) {
+    return StandardTable(columnData: {'Missed words': missedWords.join('\n')});
   }
 }

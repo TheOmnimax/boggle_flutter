@@ -1,40 +1,48 @@
-import 'package:equatable/equatable.dart';
+part of 'home_bloc.dart';
 
 abstract class HomeEvent extends Equatable {
   const HomeEvent();
+
+  @override
+  List<Object?> get props => [];
 }
 
 class SoloGame extends HomeEvent {
   const SoloGame();
-
-  @override
-  List<Object?> get props => [];
 }
 
 class HostGame extends HomeEvent {
   const HostGame();
+}
+
+class ShowPopup extends HomeEvent {
+  const ShowPopup({
+    required this.alert,
+  });
+
+  final Alert alert;
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [alert];
 }
 
 class JoinGame extends HomeEvent {
   const JoinGame({
-    required this.gameCode,
+    required this.roomCode,
     required this.name,
   });
 
-  final String gameCode;
+  final String roomCode;
   final String name;
 
   @override
-  List<Object?> get props => [gameCode, name];
+  List<Object?> get props => [roomCode, name];
+}
+
+class CancelJoin extends HomeEvent {
+  const CancelJoin();
 }
 
 class CloseError extends HomeEvent {
   const CloseError();
-
-  @override
-  // TODO: implement props
-  List<Object?> get props => [];
 }
