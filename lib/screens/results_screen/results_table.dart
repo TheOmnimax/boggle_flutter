@@ -16,7 +16,7 @@ class ResultsTable extends StatelessWidget {
       player.scoreList.forEach((key, value) {
         scoreList.add('$key: $value');
       });
-      resultData[player.name] = scoreList.join('\n');
+      resultData['${player.name}: ${player.score}'] = scoreList.join('\n');
     }
     return StandardTable(columnData: resultData);
   }
