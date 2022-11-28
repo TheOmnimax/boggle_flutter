@@ -39,6 +39,10 @@ class JoinGame extends HomeEvent {
   List<Object?> get props => [roomCode, name];
 }
 
+class CancelJoin extends HomeEvent {
+  const CancelJoin();
+}
+
 class CloseError extends HomeEvent {
   const CloseError();
 }
