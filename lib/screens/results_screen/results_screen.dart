@@ -118,7 +118,7 @@ class WinnerWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final winners = boggleResults.winnerNames;
     if (winners.isEmpty) {
-      return Text('Everyone got 0 points. There were no winners!');
+      return const Text('Everyone got 0 points. There were no winners!');
     } else if (winners.length == 1) {
       return Text(
           'Winner: ${winners[0]} (${boggleResults.winningScore} points)');

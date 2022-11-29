@@ -14,7 +14,7 @@ class MainState extends CreateGameState {
 
   @override
   MainState copyWith() {
-    return MainState();
+    return const MainState();
   }
 }
 
@@ -23,7 +23,7 @@ class LoadingGame extends CreateGameState {
 
   @override
   LoadingGame copyWith() {
-    return LoadingGame();
+    return const LoadingGame();
   }
 }
 
