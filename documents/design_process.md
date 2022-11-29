@@ -30,4 +30,4 @@ There are several classes
 
 ## Limitations
 
-(Note on upgrading to Redis)
+Data is stored using standard memory instead of Redis to save on costs.
