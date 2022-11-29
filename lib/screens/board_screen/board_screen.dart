@@ -117,8 +117,6 @@ class _BoardScreenMainState extends State<BoardScreenMain> {
                           const Text('Room code:'),
                           SelectableText(
                               context.read<AppBloc>().state.roomCode),
-                          Text(
-                              'Player code: ${context.read<AppBloc>().state.playerId}')
                         ],
                       ),
                       Row(
@@ -176,7 +174,9 @@ class _BoardScreenMainState extends State<BoardScreenMain> {
                               );
                             } else {
                               return const Text(
-                                  'Please wait for the host to start the game');
+                                'Please wait for the\nhost to start the game',
+                                textAlign: TextAlign.center,
+                              );
                             }
                           } else if (state is Complete) {
                             return const Text('Done!');
