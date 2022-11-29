@@ -25,8 +25,6 @@ class PopupBloc extends Bloc<PopupEvent, PopupState> {
   }
 
   void _updateError(UpdateError event, Emitter<PopupState> emit) {
-    print('Updated error message:');
-    print(event.errorMessage);
     emit(state.copyWith(
       errorMessage: event.errorMessage,
     ));

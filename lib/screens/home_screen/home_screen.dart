@@ -3,17 +3,12 @@ import 'package:boggle_flutter/constants/constants.dart';
 import 'package:boggle_flutter/screens/board_screen/board_screen.dart';
 import 'package:boggle_flutter/screens/create_game_screen/create_game_screen.dart';
 import 'package:boggle_flutter/screens/home_screen/bloc/home_bloc.dart';
-import 'package:boggle_flutter/screens/home_screen/popup_bloc/popup_bloc.dart';
-import 'package:boggle_flutter/screens/results_screen/results_screen.dart';
 import 'package:boggle_flutter/shared_widgets/buttons.dart';
 import 'package:boggle_flutter/shared_widgets/general.dart';
 import 'package:boggle_flutter/shared_widgets/input.dart';
-import 'package:boggle_flutter/shared_widgets/loading.dart';
-import 'package:boggle_flutter/utils/game/boggle_results.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
 
 part 'package:boggle_flutter/screens/home_screen/mode_widgets/home_host.dart';
 part 'package:boggle_flutter/screens/home_screen/mode_widgets/home_join.dart';
@@ -35,7 +30,6 @@ class HomeScreenMain extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    FocusNode fc = FocusNode();
     return GameArea(
       child: BlocListener<HomeBloc, HomeState>(
         listener: (context, state) {
@@ -55,7 +49,7 @@ class HomeScreenMain extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text('Boggle!'),
+                const Text('Boggle!'),
                 ScreenButton(
                   label: 'Host',
                   onPressed: () {
@@ -81,10 +75,8 @@ class HomeScreenMain extends StatelessWidget {
                             value: context.read<HomeBloc>(),
                             child: JoinPopup(
                               onPressed: (String name, String roomCode) {
-                                print('About to run');
                                 context.read<HomeBloc>().add(
                                     JoinGame(roomCode: roomCode, name: name));
-                                print('Ran');
                               },
                             ),
                           );

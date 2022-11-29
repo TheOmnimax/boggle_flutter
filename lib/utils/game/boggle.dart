@@ -89,11 +89,8 @@ class BoggleCell extends StatelessWidget {
     return Container(
       width: kDiceBoxSize,
       height: kDiceBoxSize,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.blue,
-        // border: Border.all(
-        //   color: Colors.blueGrey,
-        // ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(2.0),
@@ -133,7 +130,7 @@ class BoggleTable extends StatelessWidget {
     }
 
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.blue,
       ),
       child: Padding(

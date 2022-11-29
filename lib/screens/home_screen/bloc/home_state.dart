@@ -23,7 +23,6 @@ class MainState extends HomeState {
 
   @override
   MainState copyWith({String? errorMessage}) {
-    print('Copy');
     return MainState(
       errorMessage: errorMessage ?? this.errorMessage,
     );
@@ -37,7 +36,7 @@ class LoadingGame extends HomeState {
   LoadingGame copyWith({
     String? errorMessage,
   }) {
-    return LoadingGame();
+    return const LoadingGame();
   }
 }
 
@@ -48,6 +47,6 @@ class Joining extends HomeState {
   Joining copyWith({
     String? errorMessage,
   }) {
-    return Joining();
+    return const Joining();
   }
 }

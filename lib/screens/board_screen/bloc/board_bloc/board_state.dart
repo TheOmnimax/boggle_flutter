@@ -25,7 +25,7 @@ abstract class BoardState extends Equatable {
     BoggleBoard? boggleBoard,
     BogglePlayer? player,
     int? timeRemaining,
-    String enteredWord,
+    String enteredText,
   });
 }
 
@@ -49,7 +49,7 @@ class Loading extends BoardState {
     BoggleBoard? boggleBoard,
     BogglePlayer? player,
     int? timeRemaining,
-    String? enteredWord,
+    String? enteredText,
   }) {
     return const Loading();
   }
@@ -72,7 +72,7 @@ class Ready extends BoardState {
     BoggleBoard? boggleBoard,
     BogglePlayer? player,
     int? timeRemaining,
-    String? enteredWord,
+    String? enteredText,
   }) {
     return Ready(
       boggleBoard: boggleBoard ?? this.boggleBoard,
@@ -100,13 +100,13 @@ class Playing extends BoardState {
     BoggleBoard? boggleBoard,
     BogglePlayer? player,
     int? timeRemaining,
-    String? enteredWord,
+    String? enteredText,
   }) {
     return Playing(
       boggleBoard: boggleBoard ?? this.boggleBoard,
       player: player ?? this.player,
       timeRemaining: timeRemaining ?? this.timeRemaining,
-      enteredWord: enteredWord ?? this.enteredText,
+      enteredWord: enteredText ?? this.enteredText,
     );
   }
 }
@@ -128,12 +128,12 @@ class Complete extends BoardState {
     BoggleBoard? boggleBoard,
     BogglePlayer? player,
     int? timeRemaining,
-    String? enteredWord,
+    String? enteredText,
   }) {
     return Complete(
       boggleBoard: boggleBoard ?? this.boggleBoard,
       player: player ?? this.player,
-      enteredWord: enteredWord ?? this.enteredText,
+      enteredWord: enteredText ?? this.enteredText,
     );
   }
 }
@@ -155,12 +155,12 @@ class ReadyForResults extends BoardState {
     BoggleBoard? boggleBoard,
     BogglePlayer? player,
     int? timeRemaining,
-    String? enteredWord,
+    String? enteredText,
   }) {
     return ReadyForResults(
       boggleBoard: boggleBoard ?? this.boggleBoard,
       player: player ?? this.player,
-      enteredWord: enteredWord ?? this.enteredText,
+      enteredWord: enteredText ?? this.enteredText,
     );
   }
 }

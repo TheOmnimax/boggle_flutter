@@ -26,8 +26,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Future _hostGame(HostGame event, Emitter<HomeState> emit) async {}
 
   Future _addPlayer(JoinGame event, Emitter<HomeState> emit) async {
-    print('Adding player');
-    emit(Joining());
+    emit(const Joining());
     final response = await Http.post(
       uri: baseUrl + 'add-player',
       body: {
@@ -42,21 +41,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(state.copyWith(errorMessage: errorMessage));
     } else {
       final responseBody = Http.jsonDecode(response.body);
-      print(responseBody);
       if (responseBody.containsKey('error')) {
         emit(MainState(errorMessage: responseBody['error'] as String));
         return;
       }
       final playerId = responseBody['player_id'] as String;
-      print('Player ID is $playerId');
-      print('Room code: ${event.roomCode}');
       appBloc.add(AddGameInfo(
           roomCode: event.roomCode,
           playerId: playerId,
           playerName: event.name,
           isHost: false));
 
-      emit(LoadingGame());
+      emit(const LoadingGame());
     }
   }
 
@@ -67,6 +63,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   void _cancelJoin(CancelJoin event, Emitter<HomeState> emit) {
-    emit(MainState());
+    emit(const MainState());
   }
 }

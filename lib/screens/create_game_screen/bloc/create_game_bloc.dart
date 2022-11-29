@@ -6,7 +6,6 @@ import 'package:boggle_flutter/utils/http.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
-import 'package:rflutter_alert/rflutter_alert.dart';
 
 part 'create_game_event.dart';
 part 'create_game_state.dart';
@@ -21,8 +20,6 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
   final AppBloc appBloc;
 
   Future<String> _createRoom() async {
-    print('Creating room...');
-
     final response = await Http.post(
       uri: baseUrl + 'create-room',
       body: {},
@@ -61,7 +58,7 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
   }
 
   Future _create(Create event, Emitter<CreateGameState> emit) async {
-    emit(LoadingGame());
+    emit(const LoadingGame());
     // try {
     final gameCode = await _createRoom();
     final response = await _createGame(

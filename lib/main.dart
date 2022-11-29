@@ -46,8 +46,6 @@ class Main extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const HomeScreen(),
-        // '/create': (context) => const CreateGame(),
-        // '/board': (context) => const BoardScreen(),
       },
     );
   }
