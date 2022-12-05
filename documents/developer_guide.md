@@ -19,17 +19,3 @@ It then runs a MaterialApp. Currently, since data is usually passed between scre
 This folder contains the app bloc, or bloc data that is shared between all screens.
 
 In addition to login data (which isn't actually currently used, but kept in case it will be added later)
-
-## Server (back end)
-
-The server stores the game information, and processes data from the players (users).
-
-The high-level class is "GameRoom". This is what is stored by the memory store. This stores the "Player" information and "Game" information. The other classes in turn will ultimately be either properties of that class object, or properties of objects that are part of the GameRoom object.
-
-The main file that is run is "main.py". This file is very simply, simply storing the CORS info, as well as the routers. The routers are the functions called when certain URLs are called using the API. They are all stored in the "routers" folder
-
-### routers
-
-There are several files in the "routers" folder that 
-
-## Interaction

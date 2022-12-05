@@ -29,7 +29,6 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
 
   final AppBloc appBloc;
 
-  // TODO: QUESTION: Should I store this in the bloc, or the state?
   GameStatus gameStatus = GameStatus.pre;
 
   Future checkStarted() async {
@@ -48,7 +47,6 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
         }
       } else {}
     } else {
-      print('Player ID: ${appBloc.state.playerId}');
       final response = await Http.post(uri: baseUrl + 'check-in', body: {
         'room_code': appBloc.state.roomCode,
         'player_id': appBloc.state.playerId,
@@ -62,14 +60,12 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     }
   }
 
-  // TODO: Find how to stop when game is over or exited
   void _serverQuery() {
     const duration = Duration(seconds: 1);
     Timer.periodic(duration, (Timer t) async => await checkStarted());
   }
 
   Future _loadGame(LoadGame event, Emitter<BoardState> emit) async {
-    print('Loading game from code ${appBloc.state.roomCode}');
     final response = await Http.post(uri: baseUrl + 'join-game', body: {
       'room_code': appBloc.state.roomCode,
       'player_id': appBloc.state.playerId,
@@ -88,13 +84,11 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
       height: height,
     );
 
-    // TODO: Update with host info
     final bogglePlayer = BogglePlayer(
       id: appBloc.state.playerId,
       isHost: isHost,
     );
 
-    // TODO: Update player and time remaining with values from server
     emit(Ready(
       boggleBoard: boggleBoard,
       player: bogglePlayer,
@@ -162,7 +156,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
 
   void _enteredText(EnteredText event, Emitter<BoardState> emit) {
     emit(state.copyWith(
-      enteredWord: event.text,
+      enteredText: event.text,
     ));
   }
 
@@ -195,7 +189,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
       emit(
         state.copyWith(
           player: player.addApproved(word), // To update with new word info
-          enteredWord: '',
+          enteredText: '',
         ),
       );
     } else {
@@ -243,7 +237,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
             word: word,
             reason: reason,
           ),
-          enteredWord: '',
+          enteredText: '',
         ),
       );
     }

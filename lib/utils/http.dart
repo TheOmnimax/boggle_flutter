@@ -8,10 +8,8 @@ class Http {
   static Future<http.Response> post({
     required String uri,
     required Map<String, dynamic> body,
-    //TODO: Add way to add additional headers
   }) async {
     final encodedBody = json.encode(body);
-    print('Sending response...');
     final response = await http.post(
       Uri.parse(uri),
       headers: sendHeaders,

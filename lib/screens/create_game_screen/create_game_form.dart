@@ -126,14 +126,14 @@ class BoardButton extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: color,
-          borderRadius: BorderRadius.all(Radius.circular(20)),
+          borderRadius: const BorderRadius.all(Radius.circular(20)),
         ),
         height: 40,
         width: 80,
         child: Center(
           child: Text(
             '${width}x$height',
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black,
               fontSize: 28,
               fontWeight: FontWeight.bold,

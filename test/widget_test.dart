@@ -1,10 +1,3 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility that Flutter provides. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -28,3 +21,25 @@ void main() {
     expect(find.text('1'), findsOneWidget);
   });
 }
+
+// WordListDispay(
+// acceptedWords: ['Word1', 'Word2'],
+// rejectedString: 'One\nTwo')
+
+// const boggleResults = BoggleResults(
+//     sharedWords: {
+//       'word': ['p1']
+//     },
+//     bogglePlayerResults: [
+//       BogglePlayerResults(
+//           name: 'p1',
+//           scoreList: {
+//             'one': 1,
+//             'three': 3,
+//           },
+//           score: 4),
+//       BogglePlayerResults(name: 'p2', scoreList: {'two': 1}, score: 1),
+//     ],
+//     winnerNames: ['p1'],
+//     winningScore: 1,
+//     missedWords: ['Five', 'Six', '7', '8', '9', '10', '11', '12']);

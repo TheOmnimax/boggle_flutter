@@ -23,7 +23,7 @@ class _JoinPopupState extends State<JoinPopup> {
     final roomFocus = FocusNode();
 
     return SimpleDialog(
-      title: Text('Join game'),
+      title: const Text('Join game'),
       children: [
         Form(
           key: joinKey,
@@ -48,7 +48,7 @@ class _JoinPopupState extends State<JoinPopup> {
                 focusNode: roomFocus,
                 onChanged: (String value) {
                   roomCode = value;
-                  context.read<HomeBloc>().add(CloseError());
+                  context.read<HomeBloc>().add(const CloseError());
                 },
                 validator: (String? value) {
                   if (value == '') {
@@ -67,7 +67,7 @@ class _JoinPopupState extends State<JoinPopup> {
                 children: [
                   ScreenButton(
                       onPressed: () {
-                        context.read<HomeBloc>().add(CancelJoin());
+                        context.read<HomeBloc>().add(const CancelJoin());
                         Navigator.pop(context);
                       },
                       label: 'Cancel'),
@@ -135,10 +135,9 @@ class ErrorWidget extends StatelessWidget {
       if (state.errorMessage != '') {
         roomFocus.requestFocus();
       }
-      print('Updating error');
       return Text(
         state.errorMessage,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 16,
           color: Colors.red,
         ),

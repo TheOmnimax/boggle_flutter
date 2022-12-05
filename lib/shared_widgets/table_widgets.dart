@@ -47,9 +47,6 @@ class StandardTable extends StatelessWidget {
         ),
       );
     }
-    final tableRows = <TableRow>[
-      TableRow(children: headerWidgets),
-    ];
 
     return Table(
       border: TableBorder.all(),
